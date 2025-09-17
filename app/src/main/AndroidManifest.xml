@@ -11,17 +11,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BUAP">
+
+        <!-- Actividad principal: LoginActivity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.BUAP">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Actividad secundaria: HomeActivity -->
+        <activity android:name=".HomeActivity" />
+
+        <!-- Puedes mantener MainActivity si la necesitas, o eliminarla si ya no se usará -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.BUAP" />
+
     </application>
 
 </manifest>

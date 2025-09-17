@@ -1,97 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollViewLogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp">
+    android:padding="24dp"
+    android:background="@drawable/bg_animated_gradient">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:animateLayoutChanges="true">
 
+        <!-- Título -->
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="58dp"
-            android:layout_marginBottom="24dp"
+            android:layout_height="wrap_content"
             android:text="AlertaBUAP"
-            android:textSize="28sp"
-            android:textStyle="bold"/>
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="16dp"/>
 
+        <!-- Subtítulo -->
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="38dp"
-            android:layout_marginBottom="16dp"
+            android:layout_height="wrap_content"
             android:text="Login to your Account"
             android:textSize="16sp"
-            android:layout_marginTop="20dp"/>
+            android:textColor="#E0E0E0"
+            android:layout_marginBottom="12dp"/>
 
+        <!-- Email -->
         <EditText
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:background="#DDDDDD"
+            android:background="@drawable/rounded_edittext"
             android:padding="12dp"
-            android:layout_marginTop="20dp"/>
+            android:layout_marginTop="8dp"
+            android:elevation="4dp"/>
 
+        <!-- Password -->
         <EditText
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
             android:inputType="textPassword"
-            android:background="#DDDDDD"
+            android:background="@drawable/rounded_edittext"
             android:padding="12dp"
-            android:layout_marginTop="12dp"/>
+            android:layout_marginTop="12dp"
+            android:elevation="4dp"/>
 
+        <!-- Botón Sign In -->
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
             android:text="Sign In"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#1A00FF"/>
+            android:layout_marginTop="24dp"
+            android:background="@drawable/rounded_button"
+            android:elevation="6dp"
+            android:layout_marginBottom="120dp"/>
 
+        <!-- Divider -->
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginTop="100dp"
-            android:text="Or sign in with"/>
+            android:layout_height="wrap_content"
+            android:text="Or sign in with"
+            android:textColor="#E0E0E0"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="12dp"/>
 
+        <!-- Iconos redes sociales -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="8dp">
 
             <ImageView
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@drawable/ic_google"/>
+                android:padding="8dp"
+                android:background="@drawable/circle_icon_bg"
+                android:src="@drawable/ic_google"
+                android:layout_marginEnd="12dp"/>
 
             <ImageView
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/ic_facebook"/>
+                android:padding="8dp"
+                android:background="@drawable/circle_icon_bg"
+                android:src="@drawable/ic_facebook"
+                android:layout_marginEnd="12dp"/>
 
             <ImageView
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/ic_x"/>
+                android:padding="8dp"
+                android:background="@drawable/circle_icon_bg"
+                android:src="@drawable/ic_x"/>
         </LinearLayout>
 
+        <!-- Texto registro -->
         <TextView
             android:id="@+id/tvSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="32dp"
             android:text="Don't have an account? Sign up"
-            android:textSize="14sp"/>
+            android:textSize="14sp"
+            android:textColor="#FFFFFF"/>
     </LinearLayout>
 </ScrollView>

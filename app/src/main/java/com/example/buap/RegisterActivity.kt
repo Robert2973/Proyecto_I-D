@@ -1,8 +1,10 @@
 package com.example.buap
 
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +13,16 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register) // Layout mínimo funcional
+        setContentView(R.layout.activity_register) // Layout moderno con fondo animado
 
+        // Animación de fondo
+        val scrollView = findViewById<ScrollView>(R.id.scrollViewRegister)
+        val animation = scrollView.background as AnimationDrawable
+        animation.setEnterFadeDuration(3000)
+        animation.setExitFadeDuration(3000)
+        animation.start()
+
+        // Referencias a los elementos de la vista
         val etEmailRegister = findViewById<EditText>(R.id.etEmailRegister)
         val etPasswordRegister = findViewById<EditText>(R.id.etPasswordRegister)
         val etConfirmPassword = findViewById<EditText>(R.id.etConfirmPassword)
@@ -24,6 +34,7 @@ class RegisterActivity : AppCompatActivity() {
             finish() // Cierra RegisterActivity y vuelve a LoginActivity
         }
 
+        // Botón Sign Up
         btnRegister.setOnClickListener {
             val email = etEmailRegister.text.toString()
             val password = etPasswordRegister.text.toString()

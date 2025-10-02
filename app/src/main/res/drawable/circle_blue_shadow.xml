@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- Color azul -->
+    <solid android:color="#2196F3" />
+
+    <!-- Bordes opcionales (si quieres un contorno) -->
+    <stroke
+        android:width="2dp"
+        android:color="#1976D2" />
+
+    <!-- Padding para la sombra interna -->
+    <padding
+        android:left="4dp"
+        android:top="4dp"
+        android:right="4dp"
+        android:bottom="4dp" />
+
+    <!-- Sombra usando layer-list -->
+</shape>

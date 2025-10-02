@@ -2,75 +2,82 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#F5F5F5">
 
-    <!-- Header Azul -->
+    <!-- Header con gradiente -->
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:background="#0000FF">
+        android:background="@drawable/gradient_blue"
+        android:elevation="8dp">
 
         <!-- Flecha de regreso -->
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@android:drawable/ic_media_previous"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_back_white"
             android:layout_margin="16dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:contentDescription="Regresar" />
 
-        <!-- Imagen perfil -->
+        <!-- Imagen perfil circular con sombra -->
         <ImageView
             android:id="@+id/imgPerfil"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
-            android:src="@android:drawable/sym_def_app_icon"
-            android:background="@drawable/circle_bg"
+            android:layout_marginTop="60dp"
+            android:src="@drawable/ic_user"
+            android:background="@drawable/circle_bg_shadow"
             android:padding="10dp" />
 
-        <!-- Datos usuario -->
+        <!-- Datos usuario dentro de tarjeta -->
         <LinearLayout
             android:id="@+id/datosUsuario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:background="#FFFFFF"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:padding="20dp"
+            android:background="@drawable/rounded_card_shadow"
             android:layout_below="@id/imgPerfil"
-            android:layout_marginTop="20dp"
-            android:elevation="4dp"
-            android:clipToOutline="true">
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nombre: __________"
-                android:textSize="16sp" />
+                android:text="Nombre: Usuario"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginBottom="6dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edad: __________"
-                android:textSize="16sp" />
+                android:text="Edad: Desconocida"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="6dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dirección: __________"
-                android:textSize="16sp" />
+                android:text="Dirección: Puebla"
+                android:textSize="16sp"
+                android:textColor="#333333"
+                android:layout_marginBottom="6dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tel: __________"
-                android:textSize="16sp" />
+                android:text="Tel: 123456789"
+                android:textSize="16sp"
+                android:textColor="#333333"/>
         </LinearLayout>
     </RelativeLayout>
 
@@ -81,12 +88,13 @@
         android:layout_height="wrap_content"
         android:text="Historial"
         android:textStyle="bold"
-        android:textSize="20sp"
+        android:textSize="22sp"
+        android:textColor="#0000FF"
         android:layout_below="@id/header"
-        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
 
-    <!-- Lista Historial -->
+    <!-- Lista Historial con tarjetas -->
     <LinearLayout
         android:id="@+id/layoutHistorial"
         android:layout_width="match_parent"
@@ -99,25 +107,31 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reporte 1"
-            android:background="#E0E0E0"
-            android:padding="10dp"
-            android:layout_marginTop="8dp" />
+            android:background="@drawable/rounded_card_light"
+            android:padding="14dp"
+            android:layout_marginTop="8dp"
+            android:textColor="#333333"
+            android:elevation="4dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reporte 2"
-            android:background="#E0E0E0"
-            android:padding="10dp"
-            android:layout_marginTop="8dp" />
+            android:background="@drawable/rounded_card_light"
+            android:padding="14dp"
+            android:layout_marginTop="8dp"
+            android:textColor="#333333"
+            android:elevation="4dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reporte 3"
-            android:background="#E0E0E0"
-            android:padding="10dp"
-            android:layout_marginTop="8dp" />
+            android:background="@drawable/rounded_card_light"
+            android:padding="14dp"
+            android:layout_marginTop="8dp"
+            android:textColor="#333333"
+            android:elevation="4dp"/>
     </LinearLayout>
 
     <!-- Botones sociales -->
@@ -131,20 +145,26 @@
         android:padding="16dp">
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_google" />
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_google"
+            android:background="@drawable/circle_blue_shadow"
+            android:padding="8dp"/>
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/ic_facebook"
-            android:layout_marginStart="20dp" />
+            android:layout_marginStart="20dp"
+            android:background="@drawable/circle_blue_shadow"
+            android:padding="8dp"/>
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:src="@drawable/ic_x"
-            android:layout_marginStart="20dp" />
+            android:layout_marginStart="20dp"
+            android:background="@drawable/circle_blue_shadow"
+            android:padding="8dp"/>
     </LinearLayout>
 </RelativeLayout>

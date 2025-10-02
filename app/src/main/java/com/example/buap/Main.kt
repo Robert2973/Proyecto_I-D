@@ -14,7 +14,8 @@ class Main : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main_transport)  // Asegúrate de que este sea el nombre correcto del XML
+        setContentView(R.layout.activity_main_transport)
+
         // Header
         val imgPerfil = findViewById<ImageView>(R.id.imgPerfil)
         val tvSaludo = findViewById<TextView>(R.id.tvSaludo)
@@ -39,7 +40,6 @@ class Main : AppCompatActivity() {
 
         // Abrir mapa al pulsar botón
         btnOpenMap.setOnClickListener {
-            // Aquí puedes abrir otra actividad o un mapa
             val intent = Intent(this, MapsActivity::class.java)
             startActivity(intent)
         }
@@ -59,6 +59,12 @@ class Main : AppCompatActivity() {
 
         filesButton.setOnClickListener {
             Toast.makeText(this, "Files clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        // Click listener para la imagen del perfil
+        imgPerfil.setOnClickListener {
+            val intent = Intent(this, PerfilActivity::class.java)
+            startActivity(intent)
         }
 
         // Ejemplo de saludo dinámico

@@ -4,6 +4,10 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -12,9 +16,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -29,18 +30,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Referencia al botón "Encuesta"
+        // Botón para abrir ReporteActivity
         val btnEncuesta = findViewById<Button>(R.id.btnEncuesta)
         btnEncuesta.setOnClickListener {
             val intent = Intent(this, ReporteActivity::class.java)
             startActivity(intent)
         }
 
-        // Referencia a la flecha de regreso
+        // Botón regresar
         val imageViewBack = findViewById<ImageView>(R.id.imageViewBack)
-        imageViewBack.setOnClickListener {
-            // Cierra la actividad actual y regresa a la anterior
-            finish()
+        imageViewBack.setOnClickListener { finish() }
+
+        // Botón para cambiar tipo de mapa
+        val btnTipoMapa = findViewById<Button>(R.id.btnTipoMapa)
+        btnTipoMapa.setOnClickListener {
+            mostrarOpcionesMapa()
         }
     }
 
@@ -51,6 +55,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val buap = LatLng(19.0413, -98.2062)
         mMap.addMarker(MarkerOptions().position(buap).title("BUAP Puebla"))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(buap, 15f))
+
+        // Habilitar opciones visuales
+        mMap.isTrafficEnabled = true       // Mostrar tráfico
+        mMap.isBuildingsEnabled = true     // Edificios 3D
+        mMap.isIndoorEnabled = true        // Mapas interiores
+        mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
         enableMyLocation()
     }
@@ -72,6 +82,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 LOCATION_PERMISSION_REQUEST
             )
         }
+    }
+
+    private fun mostrarOpcionesMapa() {
+        val tiposMapa = arrayOf("Normal", "Satélite", "Híbrido", "Terreno")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Selecciona tipo de mapa")
+        builder.setItems(tiposMapa) { _, which ->
+            when (which) {
+                0 -> mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+                1 -> mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+                2 -> mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
+                3 -> mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
+            }
+        }
+        builder.show()
     }
 
     override fun onRequestPermissionsResult(

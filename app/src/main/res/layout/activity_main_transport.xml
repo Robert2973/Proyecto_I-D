@@ -1,225 +1,220 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#FFFFFF"
+    android:fillViewport="true">
 
-    <!-- Header con gradiente -->
-    <RelativeLayout
-        android:id="@+id/header"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:background="@drawable/gradient_blue"
-        android:elevation="8dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- Icono perfil -->
-        <ImageView
-            android:id="@+id/imgPerfil"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@android:drawable/sym_def_app_icon"
-            android:background="@drawable/circle_bg_shadow"
-            android:layout_margin="16dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:padding="4dp"/>
+        <!-- HEADER -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:background="@drawable/gradient_blue">
 
-        <!-- Texto saludo -->
+            <ImageView
+                android:id="@+id/imgPerfil"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_user"
+                android:background="@drawable/circle_bg_shadow"
+                android:layout_margin="16dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:padding="4dp"/>
+
+            <TextView
+                android:id="@+id/tvSaludo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hola, Usuario"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_toEndOf="@id/imgPerfil"
+                android:layout_alignTop="@id/imgPerfil"
+                android:layout_marginStart="12dp"/>
+
+            <!-- Título sección informativa centrado debajo del saludo -->
+            <TextView
+                android:id="@+id/tvTituloInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Información de Seguridad"
+                android:textStyle="bold"
+                android:textSize="22sp"
+                android:textColor="#FFFFFF"
+                android:layout_below="@id/tvSaludo"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="66dp"/>
+        </RelativeLayout>
+
+        <!-- CLIMA -->
+        <LinearLayout
+            android:id="@+id/layoutWeather"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imgWeather"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_sun"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:id="@+id/tvCity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Puebla"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="#000000"/>
+
+                <TextView
+                    android:id="@+id/tvTemp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="25°C • Soleado"
+                    android:textColor="#444444"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- TEXTO INFORMATIVO -->
         <TextView
-            android:id="@+id/tvSaludo"
+            android:id="@+id/tvInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Recuerda mantenerte informado sobre las condiciones de tu zona y tomar precauciones de seguridad."
+            android:padding="16dp"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:background="@drawable/rounded_card_light"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- CATEGORÍAS DE RIESGO -->
+        <GridLayout
+            android:id="@+id/riskCategories"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:alignmentMode="alignMargins"
+            android:columnCount="2"
+            android:gravity="center"
+            android:padding="16dp"
+            android:rowCount="3">
+
+            <!-- Ejemplo Riesgo: Inseguridad -->
+            <LinearLayout
+                android:layout_width="170dp"
+                android:layout_height="140dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/card_transport"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_security"
+                    android:tint="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Inseguridad"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="170dp"
+                android:layout_height="140dp"
+                android:layout_margin="8dp"
+                android:background="@drawable/card_transport"
+                android:elevation="4dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_security"
+                    android:tint="#FFFFFF" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Seguridad"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </GridLayout>
+
+        <!-- BOTÓN MAPA -->
+        <Button
+            android:id="@+id/btnOpenMap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hi Person"
-            android:textSize="20sp"
-            android:textStyle="bold"
+            android:text="OPEN MAP"
+            android:backgroundTint="#0000FF"
             android:textColor="#FFFFFF"
-            android:layout_toEndOf="@id/imgPerfil"
-            android:layout_alignTop="@id/imgPerfil"
-            android:layout_marginStart="12dp"/>
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="12dp"
+            android:background="@drawable/rounded_button"/>
 
-        <!-- Menú hamburguesa -->
-        <ImageView
-            android:id="@+id/btnMenu"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@android:drawable/ic_menu_sort_by_size"
-            android:layout_alignParentEnd="true"
-            android:layout_margin="16dp"
-            android:contentDescription="Menu"/>
+        <!-- ÚLTIMAS ALERTAS -->
+        <TextView
+            android:id="@+id/tvUltimasAlertas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Últimas Alertas"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#000000"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="16dp"/>
 
-        <!-- Caja de ubicación -->
         <LinearLayout
-            android:id="@+id/locationBox"
+            android:id="@+id/layoutAlertas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:layout_below="@id/imgPerfil"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="20dp"
-            android:elevation="6dp"
-            android:clipToOutline="true"
-            android:backgroundTint="#FFFFFF"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/rounded_card_shadow">
+            android:padding="16dp">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Your location"
-                android:textStyle="italic"
-                android:textColor="#555555"/>
-
-            <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#DDDDDD"
-                android:layout_marginVertical="8dp"/>
+                android:layout_height="wrap_content"
+                android:text="⚠️ Asalto reportado cerca de FCFM"
+                android:background="@drawable/rounded_card_light"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"/>
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Your destination"
-                android:textStyle="italic"
-                android:textColor="#555555"/>
+                android:text="🌊 Encharcamiento en Av. San Claudio"
+                android:background="@drawable/rounded_card_light"
+                android:padding="12dp"
+                android:layout_marginTop="8dp"/>
         </LinearLayout>
-    </RelativeLayout>
-
-    <!-- Opciones de transporte -->
-    <GridLayout
-        android:id="@+id/transportOptions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/header"
-        android:layout_marginTop="24dp"
-        android:alignmentMode="alignMargins"
-        android:columnCount="2"
-        android:gravity="center"
-        android:padding="16dp"
-        android:rowCount="2">
-
-        <!-- Bicicleta -->
-        <LinearLayout
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/card_transport"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:elevation="4dp">
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/ic_bike"
-                android:tint="#FFFFFF"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Bicycle"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <!-- Carro -->
-        <LinearLayout
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/card_transport"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:elevation="4dp">
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/ic_car"
-                android:tint="#FFFFFF"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Car"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <!-- Bus -->
-        <LinearLayout
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:layout_margin="8dp"
-            android:background="@drawable/card_transport"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:elevation="4dp">
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/ic_bus"
-                android:tint="#FFFFFF"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="Bus"
-                android:textColor="#FFFFFF"
-                android:textStyle="bold"/>
-        </LinearLayout>
-    </GridLayout>
-
-    <Button
-        android:id="@+id/btnOpenMap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="OPEN MAP"
-        android:backgroundTint="#0000FF"
-        android:textColor="#FFFFFF"
-        android:layout_below="@id/transportOptions"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:paddingHorizontal="32dp"
-        android:paddingVertical="12dp"
-        android:background="@drawable/rounded_button"/>
-
-    <!-- Bottom Navigation -->
-    <LinearLayout
-        android:id="@+id/bottomNav"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:background="#FFFFFF"
-        android:elevation="8dp">
-
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@android:drawable/ic_menu_view"
-            android:tint="#555555"
-            android:layout_margin="24dp"/>
-
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@android:drawable/ic_input_add"
-            android:background="@drawable/circle_blue"
-            android:layout_margin="24dp"
-            android:tint="#FFFFFF"/>
-
-        <ImageView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@android:drawable/ic_menu_agenda"
-            android:tint="#555555"
-            android:layout_margin="24dp"/>
     </LinearLayout>
-</RelativeLayout>
+</ScrollView>

@@ -40,6 +40,10 @@
             android:name=".MapsActivity"
             android:exported="true"/>
 
+        <activity
+            android:name=".ReporteActivity"
+            android:exported="true"/>
+
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.example.buap
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
@@ -25,6 +28,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        // Referencia al botón "Encuesta"
+        val btnEncuesta = findViewById<Button>(R.id.btnEncuesta)
+        btnEncuesta.setOnClickListener {
+            val intent = Intent(this, ReporteActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Referencia a la flecha de regreso
+        val imageViewBack = findViewById<ImageView>(R.id.imageViewBack)
+        imageViewBack.setOnClickListener {
+            // Cierra la actividad actual y regresa a la anterior
+            finish()
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

@@ -1,170 +1,177 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- Header con gradiente -->
     <RelativeLayout
-        android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:background="@drawable/gradient_blue"
-        android:elevation="8dp">
+        android:layout_height="wrap_content">
 
-        <!-- Flecha de regreso -->
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_back_white"
-            android:layout_margin="16dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:contentDescription="Regresar" />
+        <!-- Header con gradiente -->
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:background="@drawable/gradient_blue"
+            android:elevation="8dp">
 
-        <!-- Imagen perfil circular con sombra -->
-        <ImageView
-            android:id="@+id/imgPerfil"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
-            android:src="@drawable/ic_user"
-            android:background="@drawable/circle_bg_shadow"
-            android:padding="10dp" />
+            <!-- Flecha de regreso -->
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_back_white"
+                android:layout_margin="16dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:contentDescription="Regresar" />
 
-        <!-- Datos usuario dentro de tarjeta -->
+            <!-- Imagen perfil circular con sombra -->
+            <ImageView
+                android:id="@+id/imgPerfil"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="60dp"
+                android:src="@drawable/ic_user"
+                android:background="@drawable/circle_bg_shadow"
+                android:padding="10dp" />
+
+            <!-- Datos usuario dentro de tarjeta -->
+            <LinearLayout
+                android:id="@+id/datosUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/imgPerfil"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/rounded_card_shadow"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="Nombre: Usuario"
+                    android:textColor="#333333"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="Edad: Desconocida"
+                    android:textColor="#333333"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:text="Dirección: Puebla"
+                    android:textColor="#333333"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tel: 123456789"
+                    android:textColor="#333333"
+                    android:textSize="16sp" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Historial -->
+        <TextView
+            android:id="@+id/tvHistorial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Historial"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            android:textColor="#0000FF"
+            android:layout_below="@id/header"
+            android:layout_marginTop="16dp"
+            android:layout_centerHorizontal="true" />
+
+        <!-- Lista Historial con tarjetas -->
         <LinearLayout
-            android:id="@+id/datosUsuario"
+            android:id="@+id/layoutHistorial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/tvHistorial"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:background="@drawable/rounded_card_shadow"
-            android:layout_below="@id/imgPerfil"
-            android:layout_marginStart="24dp"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="16dp">
+            android:padding="16dp">
 
+            <!-- Ejemplo de tarjeta de reporte -->
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre: Usuario"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:text="Reporte 1"
+                android:background="@drawable/rounded_card_light"
+                android:padding="14dp"
+                android:layout_marginTop="8dp"
                 android:textColor="#333333"
-                android:layout_marginBottom="6dp"/>
+                android:elevation="4dp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Edad: Desconocida"
-                android:textSize="16sp"
+                android:text="Reporte 2"
+                android:background="@drawable/rounded_card_light"
+                android:padding="14dp"
+                android:layout_marginTop="8dp"
                 android:textColor="#333333"
-                android:layout_marginBottom="6dp"/>
+                android:elevation="4dp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Dirección: Puebla"
-                android:textSize="16sp"
+                android:text="Reporte 3"
+                android:background="@drawable/rounded_card_light"
+                android:padding="14dp"
+                android:layout_marginTop="8dp"
                 android:textColor="#333333"
-                android:layout_marginBottom="6dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tel: 123456789"
-                android:textSize="16sp"
-                android:textColor="#333333"/>
+                android:elevation="4dp" />
         </LinearLayout>
+
+        <!-- Botones sociales -->
+        <LinearLayout
+            android:id="@+id/socialButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layoutHistorial"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_google"
+                android:background="@drawable/circle_blue_shadow"
+                android:padding="8dp" />
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_facebook"
+                android:layout_marginStart="20dp"
+                android:background="@drawable/circle_blue_shadow"
+                android:padding="8dp" />
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_x"
+                android:layout_marginStart="20dp"
+                android:background="@drawable/circle_blue_shadow"
+                android:padding="8dp" />
+        </LinearLayout>
+
     </RelativeLayout>
-
-    <!-- Historial -->
-    <TextView
-        android:id="@+id/tvHistorial"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Historial"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:textColor="#0000FF"
-        android:layout_below="@id/header"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
-
-    <!-- Lista Historial con tarjetas -->
-    <LinearLayout
-        android:id="@+id/layoutHistorial"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvHistorial"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Reporte 1"
-            android:background="@drawable/rounded_card_light"
-            android:padding="14dp"
-            android:layout_marginTop="8dp"
-            android:textColor="#333333"
-            android:elevation="4dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Reporte 2"
-            android:background="@drawable/rounded_card_light"
-            android:padding="14dp"
-            android:layout_marginTop="8dp"
-            android:textColor="#333333"
-            android:elevation="4dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Reporte 3"
-            android:background="@drawable/rounded_card_light"
-            android:padding="14dp"
-            android:layout_marginTop="8dp"
-            android:textColor="#333333"
-            android:elevation="4dp"/>
-    </LinearLayout>
-
-    <!-- Botones sociales -->
-    <LinearLayout
-        android:id="@+id/socialButtons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="16dp">
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_google"
-            android:background="@drawable/circle_blue_shadow"
-            android:padding="8dp"/>
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_facebook"
-            android:layout_marginStart="20dp"
-            android:background="@drawable/circle_blue_shadow"
-            android:padding="8dp"/>
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_x"
-            android:layout_marginStart="20dp"
-            android:background="@drawable/circle_blue_shadow"
-            android:padding="8dp"/>
-    </LinearLayout>
-</RelativeLayout>
+</ScrollView>

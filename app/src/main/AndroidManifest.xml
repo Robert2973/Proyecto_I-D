@@ -48,6 +48,10 @@
             android:name=".PerfilActivity"
             android:exported="true"/>
 
+        <activity
+            android:name=".DetalleReporteActivity"
+            android:exported="true"/>
+
     </application>
 
 </manifest>

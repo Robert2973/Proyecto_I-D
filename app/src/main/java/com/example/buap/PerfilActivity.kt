@@ -6,22 +6,30 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 
 class PerfilActivity : AppCompatActivity() {
 
+    private lateinit var layoutHistorial: LinearLayout
+    private lateinit var dbHelper: DatabaseHelper
+    private lateinit var btnBack: ImageView
+    private lateinit var imgPerfil: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_perfil) // Asegúrate de que coincida con tu XML
+        setContentView(R.layout.activity_perfil)
 
-        // Referencias a elementos
-        val btnBack = findViewById<ImageView>(R.id.btnBack)
-        val imgPerfil = findViewById<ImageView>(R.id.imgPerfil)
-        val layoutHistorial = findViewById<LinearLayout>(R.id.layoutHistorial)
-        val tvHistorial = findViewById<TextView>(R.id.tvHistorial)
+        // Inicializar la base de datos
+        dbHelper = DatabaseHelper(this)
+
+        // Referencias a elementos del layout
+        btnBack = findViewById(R.id.btnBack)
+        imgPerfil = findViewById(R.id.imgPerfil)
+        layoutHistorial = findViewById(R.id.layoutHistorial)
 
         // Flecha de regreso
         btnBack.setOnClickListener {
-            finish() // Regresa a la actividad anterior
+            finish()
         }
 
         // Click en la imagen del perfil
@@ -30,26 +38,52 @@ class PerfilActivity : AppCompatActivity() {
             // Aquí podrías abrir un editor de perfil o foto
         }
 
-        // Ejemplo: click en cada item del historial
-        for (i in 0 until layoutHistorial.childCount) {
-            val reporte = layoutHistorial.getChildAt(i) as TextView
-            reporte.setOnClickListener {
-                Toast.makeText(this, "Abriendo ${reporte.text}", Toast.LENGTH_SHORT).show()
-                // Aquí podrías abrir detalles del reporte
+        // Cargar historial desde la base de datos
+        cargarHistorial()
+    }
+
+    private fun cargarHistorial() {
+        layoutHistorial.removeAllViews() // Limpiar historial antes de cargar
+        val reportes = dbHelper.getAllReportes() // Devuelve lista de reportes desde DB
+
+        for (reporte in reportes) {
+            val tvReporte = TextView(this)
+            tvReporte.text = "${reporte.nombre} - ${reporte.fecha} ${reporte.hora}"
+            tvReporte.setBackgroundResource(R.drawable.rounded_card_light)
+            tvReporte.setPadding(20, 20, 20, 20)
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(0, 12, 0, 0)
+            tvReporte.layoutParams = params
+
+            tvReporte.setOnClickListener {
+                val intent = Intent(this, DetalleReporteActivity::class.java)
+                intent.putExtra("nombre", reporte.nombre)
+                intent.putExtra("fecha", reporte.fecha)
+                intent.putExtra("hora", reporte.hora)
+                intent.putExtra("direccion", reporte.direccion)
+                intent.putExtra("riesgo", reporte.riesgo)
+                intent.putExtra("descripcion", reporte.descripcion)
+                startActivity(intent)
             }
+
+
+            layoutHistorial.addView(tvReporte)
         }
 
-        // Opcional: click en botones sociales
-        val socialButtons = findViewById<LinearLayout>(R.id.socialButtons)
-        for (i in 0 until socialButtons.childCount) {
-            val socialIcon = socialButtons.getChildAt(i) as ImageView
-            socialIcon.setOnClickListener {
-                when (i) {
-                    0 -> Toast.makeText(this, "Google clicked", Toast.LENGTH_SHORT).show()
-                    1 -> Toast.makeText(this, "Facebook clicked", Toast.LENGTH_SHORT).show()
-                    2 -> Toast.makeText(this, "X clicked", Toast.LENGTH_SHORT).show()
-                }
-            }
+        if (reportes.isEmpty()) {
+            val tvVacio = TextView(this)
+            tvVacio.text = "No hay reportes aún"
+            tvVacio.setPadding(20, 20, 20, 20)
+            layoutHistorial.addView(tvVacio)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Recargar historial cada vez que regresa a esta pantalla
+        cargarHistorial()
     }
 }

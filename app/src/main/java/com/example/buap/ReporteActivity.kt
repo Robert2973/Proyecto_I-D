@@ -9,46 +9,84 @@ import androidx.appcompat.app.AppCompatActivity
 
 class ReporteActivity : AppCompatActivity() {
 
+    private lateinit var etNombre: EditText
+    private lateinit var etFecha: EditText
+    private lateinit var etHora: EditText
+    private lateinit var etDireccion: EditText
+    private lateinit var etRiesgo: EditText
+    private lateinit var etDescripcion: EditText
+    private lateinit var btnEnviar: Button
+    private lateinit var ivBack: ImageView
+
+    private lateinit var dbHelper: DatabaseHelper
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_nuevo_reporte) // Asegúrate de que el layout se llame así
+        setContentView(R.layout.activity_nuevo_reporte) // Tu layout XML
 
-        // Referencias a los elementos
-        val ivBack = findViewById<ImageView>(R.id.imageViewBack)
-        ivBack.setOnClickListener {
-            finish()
-        }
-        val etNombre = findViewById<EditText>(R.id.etNombre)
-        val etFecha = findViewById<EditText>(R.id.etFecha)
-        val etHora = findViewById<EditText>(R.id.etHora)
-        val etDireccion = findViewById<EditText>(R.id.etDireccion)
-        val etRiesgo = findViewById<EditText>(R.id.etRiesgo)
-        val etDescripcion = findViewById<EditText>(R.id.etDescripcion)
-        val btnEnviar = findViewById<Button>(R.id.btnEnviar)
+        // Inicializar base de datos
+        dbHelper = DatabaseHelper(this)
+
+        // Referencias a elementos de UI
+        etNombre = findViewById(R.id.etNombre)
+        etFecha = findViewById(R.id.etFecha)
+        etHora = findViewById(R.id.etHora)
+        etDireccion = findViewById(R.id.etDireccion)
+        etRiesgo = findViewById(R.id.etRiesgo)
+        etDescripcion = findViewById(R.id.etDescripcion)
+        btnEnviar = findViewById(R.id.btnEnviar)
+        ivBack = findViewById(R.id.imageViewBack)
 
         // Botón regresar
         ivBack.setOnClickListener {
-            finish() // Cierra la actividad y regresa a la anterior
+            finish()
         }
 
         // Botón enviar
         btnEnviar.setOnClickListener {
-            val nombre = etNombre.text.toString()
-            val fecha = etFecha.text.toString()
-            val hora = etHora.text.toString()
-            val direccion = etDireccion.text.toString()
-            val riesgo = etRiesgo.text.toString()
-            val descripcion = etDescripcion.text.toString()
-
-            if (nombre.isEmpty() || fecha.isEmpty() || hora.isEmpty() ||
-                direccion.isEmpty() || riesgo.isEmpty() || descripcion.isEmpty()
-            ) {
-                Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
-            } else {
-                // Aquí puedes guardar en la base de datos o enviar al servidor
-                Toast.makeText(this, "Reporte enviado correctamente", Toast.LENGTH_SHORT).show()
-                finish() // Opcional: cerrar la actividad después de enviar
-            }
+            enviarReporte()
         }
+    }
+
+    private fun enviarReporte() {
+        val nombre = etNombre.text.toString()
+        val fecha = etFecha.text.toString()
+        val hora = etHora.text.toString()
+        val direccion = etDireccion.text.toString()
+        val riesgo = etRiesgo.text.toString()
+        val descripcion = etDescripcion.text.toString()
+
+        if (nombre.isEmpty() || fecha.isEmpty() || hora.isEmpty() ||
+            direccion.isEmpty() || riesgo.isEmpty() || descripcion.isEmpty()
+        ) {
+            Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val reporte = Reporte(
+            nombre = nombre,
+            fecha = fecha,
+            hora = hora,
+            direccion = direccion,
+            riesgo = riesgo,
+            descripcion = descripcion
+        )
+
+        val id = dbHelper.insertReporte(reporte)
+        if (id > 0) {
+            Toast.makeText(this, "Reporte enviado correctamente", Toast.LENGTH_SHORT).show()
+            limpiarCampos()
+        } else {
+            Toast.makeText(this, "Error al enviar reporte", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun limpiarCampos() {
+        etNombre.text.clear()
+        etFecha.text.clear()
+        etHora.text.clear()
+        etDireccion.text.clear()
+        etRiesgo.text.clear()
+        etDescripcion.text.clear()
     }
 }

@@ -1,6 +1,5 @@
 package com.example.buap
 
-import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -8,33 +7,32 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_register) // Layout moderno con fondo animado
+        setContentView(R.layout.activity_register)
 
-        // Animación de fondo
-        val scrollView = findViewById<ScrollView>(R.id.scrollViewRegister)
-        val animation = scrollView.background as AnimationDrawable
-        animation.setEnterFadeDuration(3000)
-        animation.setExitFadeDuration(3000)
-        animation.start()
+        // Se eliminó la animación de fondo
+        // val scrollView = findViewById<ScrollView>(R.id.scrollViewRegister)
+        // val animation = scrollView.background as AnimationDrawable
+        // animation.setEnterFadeDuration(3000)
+        // animation.setExitFadeDuration(3000)
+        // animation.start()
 
-        // Referencias a los elementos de la vista
         val etEmailRegister = findViewById<EditText>(R.id.etEmailRegister)
         val etPasswordRegister = findViewById<EditText>(R.id.etPasswordRegister)
         val etConfirmPassword = findViewById<EditText>(R.id.etConfirmPassword)
         val btnRegister = findViewById<Button>(R.id.btnRegister)
-
-        // Flecha para regresar
         val tvBack = findViewById<TextView>(R.id.tvBack)
-        tvBack.setOnClickListener {
-            finish() // Cierra RegisterActivity y vuelve a LoginActivity
-        }
 
-        // Botón Sign Up
+        val db = AppDatabase.getDatabase(this)
+
+        tvBack.setOnClickListener { finish() }
+
         btnRegister.setOnClickListener {
             val email = etEmailRegister.text.toString()
             val password = etPasswordRegister.text.toString()
@@ -48,8 +46,21 @@ class RegisterActivity : AppCompatActivity() {
                     Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
                 }
                 else -> {
-                    Toast.makeText(this, "Cuenta creada con éxito", Toast.LENGTH_SHORT).show()
-                    finish() // Vuelve al LoginActivity
+                    val hashed = hashPassword(password)
+                    lifecycleScope.launch {
+                        val existingUser = db.userDao().getUserByEmail(email)
+                        runOnUiThread {
+                            if (existingUser != null) {
+                                Toast.makeText(this@RegisterActivity, "El correo ya existe", Toast.LENGTH_SHORT).show()
+                            } else {
+                                lifecycleScope.launch {
+                                    db.userDao().insert(User(email = email, password = hashed))
+                                }
+                                Toast.makeText(this@RegisterActivity, "Cuenta creada con éxito", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                        }
+                    }
                 }
             }
         }

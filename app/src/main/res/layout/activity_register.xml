@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp"
-    android:background="@drawable/bg_animated_gradient">
+    android:background="@drawable/bg_gradient_animated_smooth">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -30,10 +30,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AlertaBUAP"
-            android:textSize="32sp"
+            android:textSize="36sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp"
+            android:shadowColor="#000000"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="4"/>
 
         <!-- Subtítulo -->
         <TextView
@@ -41,7 +45,7 @@
             android:layout_height="wrap_content"
             android:text="Create your Account"
             android:textSize="16sp"
-            android:textColor="#E0E0E0"
+            android:textColor="#DDDDDD"
             android:layout_marginBottom="24dp"/>
 
         <!-- Email -->
@@ -51,10 +55,11 @@
             android:layout_height="wrap_content"
             android:hint="Email"
             android:inputType="textEmailAddress"
-            android:background="@drawable/rounded_edittext"
-            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_shadow"
+            android:padding="14dp"
             android:layout_marginTop="8dp"
-            android:elevation="4dp"/>
+            android:elevation="6dp"
+            android:drawablePadding="10dp"/>
 
         <!-- Password -->
         <EditText
@@ -63,10 +68,11 @@
             android:layout_height="wrap_content"
             android:hint="Password"
             android:inputType="textPassword"
-            android:background="@drawable/rounded_edittext"
-            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_shadow"
+            android:padding="14dp"
             android:layout_marginTop="12dp"
-            android:elevation="4dp"/>
+            android:elevation="6dp"
+            android:drawablePadding="10dp"/>
 
         <!-- Confirm Password -->
         <EditText
@@ -75,10 +81,11 @@
             android:layout_height="wrap_content"
             android:hint="Confirm Password"
             android:inputType="textPassword"
-            android:background="@drawable/rounded_edittext"
-            android:padding="12dp"
+            android:background="@drawable/rounded_edittext_shadow"
+            android:padding="14dp"
             android:layout_marginTop="12dp"
-            android:elevation="4dp"/>
+            android:elevation="6dp"
+            android:drawablePadding="10dp"/>
 
         <!-- Botón Sign Up -->
         <Button
@@ -88,15 +95,15 @@
             android:text="Sign Up"
             android:textColor="#FFFFFF"
             android:layout_marginTop="24dp"
-            android:background="@drawable/rounded_button"
-            android:elevation="6dp"/>
+            android:background="@drawable/rounded_button_elevated"
+            android:elevation="8dp"/>
 
         <!-- Divider -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Or sign in with"
-            android:textColor="#E0E0E0"
+            android:textColor="#CCCCCC"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="12dp"/>
 
@@ -109,27 +116,30 @@
             android:layout_marginTop="8dp">
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:background="@drawable/circle_icon_bg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:background="@drawable/circle_icon_shadow"
                 android:src="@drawable/ic_google"
-                android:layout_marginEnd="12dp"/>
+                android:layout_marginEnd="12dp"
+                android:elevation="6dp"/>
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:background="@drawable/circle_icon_bg"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:background="@drawable/circle_icon_shadow"
                 android:src="@drawable/ic_facebook"
-                android:layout_marginEnd="12dp"/>
+                android:layout_marginEnd="12dp"
+                android:elevation="6dp"/>
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:padding="8dp"
-                android:background="@drawable/circle_icon_bg"
-                android:src="@drawable/ic_x"/>
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+                android:background="@drawable/circle_icon_shadow"
+                android:src="@drawable/ic_x"
+                android:elevation="6dp"/>
         </LinearLayout>
 
     </LinearLayout>

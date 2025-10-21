@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="#F5F5F5">
+    android:background="#121212">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,7 +16,9 @@
             android:src="@drawable/ic_back_white"
             android:contentDescription="Regresar"
             android:layout_alignParentStart="true"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="16dp"
+            android:alpha="0.9"
+            android:translationZ="6dp"/>
 
         <!-- Tarjeta principal del reporte -->
         <LinearLayout
@@ -26,10 +28,11 @@
             android:orientation="vertical"
             android:layout_below="@id/ivBack"
             android:layout_marginTop="24dp"
-            android:background="@drawable/rounded_card_light"
+            android:background="@drawable/glass_card"
             android:padding="24dp"
-            android:elevation="6dp"
-            android:gravity="center_horizontal">
+            android:elevation="10dp"
+            android:gravity="center_horizontal"
+            android:animateLayoutChanges="true">
 
             <!-- Nombre -->
             <TextView
@@ -37,10 +40,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Nombre: Usuario"
-                android:textSize="18sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginBottom="12dp"
+                android:textColor="#E5FFF4"
+                android:shadowColor="#1FFF9E"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="8"
+                android:layout_marginBottom="14dp"
                 android:gravity="center"/>
 
             <!-- Fecha y hora -->
@@ -49,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Fecha/Hora: 01/01/2025 12:00"
-                android:textColor="#555555"
+                android:textColor="#B0BEC5"
                 android:layout_marginBottom="12dp"
                 android:gravity="center"/>
 
@@ -59,7 +66,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dirección: Calle Ejemplo 123"
-                android:textColor="#555555"
+                android:textColor="#B0BEC5"
                 android:layout_marginBottom="12dp"
                 android:gravity="center"/>
 
@@ -69,17 +76,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tipo de riesgo: Medio"
-                android:textColor="#555555"
+                android:textColor="#B0BEC5"
                 android:layout_marginBottom="12dp"
                 android:gravity="center"/>
 
-            <!-- Descripción (bloque tipo párrafo) -->
+            <!-- Descripción -->
             <TextView
                 android:id="@+id/tvDescripcion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Descripción del reporte. Aquí se puede poner todo el detalle que necesites. Se mostrará como un párrafo centrado con buena legibilidad."
-                android:textColor="#444444"
+                android:textColor="#DDDDDD"
                 android:textSize="16sp"
                 android:lineSpacingExtra="4dp"
                 android:gravity="center"

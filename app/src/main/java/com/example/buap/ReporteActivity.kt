@@ -1,11 +1,14 @@
 package com.example.buap
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import java.util.*
 
 class ReporteActivity : AppCompatActivity() {
 
@@ -22,12 +25,12 @@ class ReporteActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_nuevo_reporte) // Tu layout XML
+        setContentView(R.layout.activity_nuevo_reporte)
 
         // Inicializar base de datos
         dbHelper = DatabaseHelper(this)
 
-        // Referencias a elementos de UI
+        // Referencias
         etNombre = findViewById(R.id.etNombre)
         etFecha = findViewById(R.id.etFecha)
         etHora = findViewById(R.id.etHora)
@@ -38,8 +41,34 @@ class ReporteActivity : AppCompatActivity() {
         ivBack = findViewById(R.id.imageViewBack)
 
         // Botón regresar
-        ivBack.setOnClickListener {
-            finish()
+        ivBack.setOnClickListener { finish() }
+
+        // DatePicker para fecha
+        etFecha.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePicker = DatePickerDialog(this, { _, y, m, d ->
+                val mes = m + 1
+                etFecha.setText(String.format("%02d/%02d/%04d", d, mes, y))
+            }, year, month, day)
+
+            datePicker.show()
+        }
+
+        // TimePicker para hora
+        etHora.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            val minute = calendar.get(Calendar.MINUTE)
+
+            val timePicker = TimePickerDialog(this, { _, h, m ->
+                etHora.setText(String.format("%02d:%02d", h, m))
+            }, hour, minute, true)
+
+            timePicker.show()
         }
 
         // Botón enviar

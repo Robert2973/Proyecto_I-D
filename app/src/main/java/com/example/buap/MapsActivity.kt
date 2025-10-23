@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -24,42 +23,65 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
+        setContentView(R.layout.activity_maps) // Mantener tu layout actual
 
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Botón para abrir ReporteActivity
-        val btnEncuesta = findViewById<Button>(R.id.btnEncuesta)
-        btnEncuesta.setOnClickListener {
+        // Botón Reporte / Encuesta
+        findViewById<Button>(R.id.btnEncuesta).setOnClickListener {
             val intent = Intent(this, ReporteActivity::class.java)
             startActivity(intent)
         }
 
-        // Botón regresar
-        val imageViewBack = findViewById<ImageView>(R.id.imageViewBack)
-        imageViewBack.setOnClickListener { finish() }
+        // Botón Regresar
+        findViewById<ImageView>(R.id.imageViewBack).setOnClickListener { finish() }
 
-        // Botón para cambiar tipo de mapa
-        val btnTipoMapa = findViewById<Button>(R.id.btnTipoMapa)
-        btnTipoMapa.setOnClickListener {
-            mostrarOpcionesMapa()
+        // --- Tipos de mapa ---
+        val btnNormal = findViewById<Button>(R.id.btnNormal)
+        val btnSatellite = findViewById<Button>(R.id.btnSatellite)
+        val btnHybrid = findViewById<Button>(R.id.btnHybrid)
+        val btnTerrain = findViewById<Button>(R.id.btnTerrain)
+
+        // --- Capas que sí funcionan ---
+        val btnTraffic = findViewById<Button>(R.id.btnTraffic)
+        val btnRelief = findViewById<Button>(R.id.btnRelief)
+        val btnDefault = findViewById<Button>(R.id.btnDefault)
+
+        // Listeners para tipos de mapa
+        btnNormal.setOnClickListener { mMap.mapType = GoogleMap.MAP_TYPE_NORMAL }
+        btnSatellite.setOnClickListener { mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE }
+        btnHybrid.setOnClickListener { mMap.mapType = GoogleMap.MAP_TYPE_HYBRID }
+        btnTerrain.setOnClickListener { mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN }
+
+        // Listeners para capas
+        btnTraffic.setOnClickListener {
+            mMap.isTrafficEnabled = !mMap.isTrafficEnabled
+            actualizarBotonActivo(btnTraffic, mMap.isTrafficEnabled)
+        }
+
+        btnRelief.setOnClickListener { mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN }
+
+        btnDefault.setOnClickListener {
+            mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+            mMap.isTrafficEnabled = false
+            mMap.isBuildingsEnabled = true
         }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Ejemplo: agregar un marcador en BUAP Puebla
+        // Marcador ejemplo BUAP Puebla
         val buap = LatLng(19.0413, -98.2062)
         mMap.addMarker(MarkerOptions().position(buap).title("BUAP Puebla"))
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(buap, 15f))
 
-        // Habilitar opciones visuales
-        mMap.isTrafficEnabled = true       // Mostrar tráfico
-        mMap.isBuildingsEnabled = true     // Edificios 3D
-        mMap.isIndoorEnabled = true        // Mapas interiores
+        // Configuración inicial
+        mMap.isTrafficEnabled = true
+        mMap.isBuildingsEnabled = true
+        mMap.isIndoorEnabled = true
         mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
         enableMyLocation()
@@ -84,21 +106,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun mostrarOpcionesMapa() {
-        val tiposMapa = arrayOf("Normal", "Satélite", "Híbrido", "Terreno")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Selecciona tipo de mapa")
-        builder.setItems(tiposMapa) { _, which ->
-            when (which) {
-                0 -> mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
-                1 -> mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
-                2 -> mMap.mapType = GoogleMap.MAP_TYPE_HYBRID
-                3 -> mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN
-            }
-        }
-        builder.show()
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -111,6 +118,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             } else {
                 Toast.makeText(this, "Permiso de ubicación denegado", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun actualizarBotonActivo(button: Button, activo: Boolean) {
+        if (activo) {
+            button.setBackgroundResource(R.drawable.rounded_button_blue)
+        } else {
+            button.setBackgroundResource(R.drawable.rounded_card_glass)
         }
     }
 }

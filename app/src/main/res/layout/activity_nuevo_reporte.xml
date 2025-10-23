@@ -1,125 +1,143 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#F5F5F5">
+    android:background="@drawable/bg_blur"
+    android:fillViewport="true"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
 
-        <!-- Flecha de regreso -->
-        <ImageView
-            android:id="@+id/imageViewBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@android:drawable/ic_media_previous"
-            android:contentDescription="Regresar"
-            android:tint="#0000FF"
-            android:padding="4dp" />
-
-        <!-- Título -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Nuevo reporte"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="#0000FF"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center" />
-
-        <!-- Campo Nombre -->
-        <EditText
-            android:id="@+id/etNombre"
+        <!-- HEADER -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nombre"
-            android:background="@drawable/bg_edittext"
-            android:padding="14dp"
-            android:layout_marginBottom="12dp"
-            android:elevation="4dp"/>
+            android:layout_height="70dp"
+            android:background="@drawable/rounded_card_glass"
+            android:padding="16dp">
 
-        <!-- Fecha y Hora -->
+            <ImageView
+                android:id="@+id/imageViewBack"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="8dp"
+                android:contentDescription="Regresar"
+                android:src="@android:drawable/ic_media_previous"
+                android:tint="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Nuevo reporte"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- FORMULARIO -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="2"
-            android:layout_marginBottom="12dp">
+            android:orientation="vertical"
+            android:background="@drawable/rounded_card_glass"
+            android:padding="16dp"
+            android:layout_marginTop="16dp">
 
             <EditText
-                android:id="@+id/etFecha"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:id="@+id/etNombre"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Fecha"
-                android:background="@drawable/bg_edittext"
+                android:hint="Nombre"
+                android:background="@drawable/bg_edittext_glass"
+                android:textColor="#000000"
+                android:textColorHint="#000000"
                 android:padding="14dp"
-                android:elevation="4dp"/>
+                android:layout_marginBottom="12dp"/>
 
-            <Space
-                android:layout_width="12dp"
-                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="12dp">
+
+                <EditText
+                    android:id="@+id/etFecha"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Fecha"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:background="@drawable/bg_edittext_glass"
+                    android:textColor="#000000"
+                    android:textColorHint="#000000"
+                    android:padding="14dp"/>
+
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="wrap_content"/>
+
+                <EditText
+                    android:id="@+id/etHora"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:hint="Hora"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:background="@drawable/bg_edittext_glass"
+                    android:textColor="#000000"
+                    android:textColorHint="#000000"
+                    android:padding="14dp"/>
+            </LinearLayout>
 
             <EditText
-                android:id="@+id/etHora"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:id="@+id/etDireccion"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Hora"
-                android:background="@drawable/bg_edittext"
+                android:hint="Dirección"
+                android:background="@drawable/bg_edittext_glass"
+                android:textColor="#000000"
+                android:textColorHint="#000000"
                 android:padding="14dp"
-                android:elevation="4dp"/>
+                android:layout_marginBottom="12dp"/>
+
+            <EditText
+                android:id="@+id/etRiesgo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Tipo de riesgo"
+                android:background="@drawable/bg_edittext_glass"
+                android:textColor="#000000"
+                android:textColorHint="#000000"
+                android:padding="14dp"
+                android:layout_marginBottom="12dp"/>
+
+            <EditText
+                android:id="@+id/etDescripcion"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:hint="Descripción del problema"
+                android:gravity="top"
+                android:background="@drawable/bg_edittext_glass"
+                android:textColor="#000000"
+                android:textColorHint="#000000"
+                android:padding="14dp"
+                android:layout_marginBottom="20dp"/>
+
+            <Button
+                android:id="@+id/btnEnviar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enviar"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/bg_button"
+                android:layout_marginBottom="20dp"/>
         </LinearLayout>
-
-        <!-- Dirección -->
-        <EditText
-            android:id="@+id/etDireccion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Dirección"
-            android:background="@drawable/bg_edittext"
-            android:padding="14dp"
-            android:layout_marginBottom="12dp"
-            android:elevation="4dp"/>
-
-        <!-- Tipo de riesgo -->
-        <EditText
-            android:id="@+id/etRiesgo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Tipo de riesgo"
-            android:background="@drawable/bg_edittext"
-            android:padding="14dp"
-            android:layout_marginBottom="12dp"
-            android:elevation="4dp"/>
-
-        <!-- Descripción -->
-        <EditText
-            android:id="@+id/etDescripcion"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:hint="Descripción del problema"
-            android:gravity="top"
-            android:background="@drawable/bg_edittext"
-            android:padding="14dp"
-            android:layout_marginBottom="20dp"
-            android:elevation="4dp"/>
-
-        <!-- Botón Enviar -->
-        <Button
-            android:id="@+id/btnEnviar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Enviar"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/bg_button"
-            android:layout_marginBottom="20dp"
-            android:elevation="6dp"/>
-
     </LinearLayout>
 </ScrollView>

@@ -2,77 +2,82 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:fillViewport="true">
+    android:background="@drawable/bg_blur"
+    android:fillViewport="true"
+    android:fadeScrollbars="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
         <!-- HEADER -->
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:background="@drawable/gradient_blue">
+            android:layout_height="150dp"
+            android:background="@drawable/rounded_card_glass"
+            android:padding="8dp"
+            android:layout_marginBottom="16dp">
 
             <ImageView
                 android:id="@+id/imgPerfil"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_user"
-                android:background="@drawable/circle_bg_shadow"
-                android:layout_margin="16dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:padding="4dp"/>
+                android:layout_margin="16dp"
+                android:background="@drawable/circle_bg_shadow"
+                android:padding="6dp"
+                android:src="@drawable/ic_user" />
 
             <TextView
                 android:id="@+id/tvSaludo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hola, Usuario"
+                android:text="¡Hola, Usuario!"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
                 android:layout_toEndOf="@id/imgPerfil"
                 android:layout_alignTop="@id/imgPerfil"
-                android:layout_marginStart="12dp"/>
+                android:layout_marginStart="12dp" />
 
-            <!-- Título sección informativa centrado debajo del saludo -->
             <TextView
                 android:id="@+id/tvTituloInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Información de Seguridad"
+                android:text="Alerta BUAP"
                 android:textStyle="bold"
-                android:textSize="22sp"
+                android:textSize="24sp"
                 android:textColor="#FFFFFF"
-                android:layout_below="@id/tvSaludo"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="66dp"/>
+                android:layout_marginTop="90dp" />
         </RelativeLayout>
 
         <!-- CLIMA -->
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/layoutWeather"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:background="@drawable/rounded_card_glass"
             android:padding="16dp"
-            android:gravity="center_vertical">
+            android:layout_marginBottom="12dp">
 
             <ImageView
                 android:id="@+id/imgWeather"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:src="@drawable/ic_sun"/>
+                android:layout_alignParentStart="true"
+                android:src="@drawable/ic_sun" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginStart="12dp">
+                android:layout_toEndOf="@id/imgWeather"
+                android:layout_marginStart="12dp"
+                android:layout_centerVertical="true">
 
                 <TextView
                     android:id="@+id/tvCity"
@@ -81,105 +86,62 @@
                     android:text="Puebla"
                     android:textStyle="bold"
                     android:textSize="16sp"
-                    android:textColor="#000000"/>
+                    android:textColor="#FFFFFF" />
 
                 <TextView
                     android:id="@+id/tvTemp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="25°C • Soleado"
-                    android:textColor="#444444"/>
+                    android:textColor="#EEEEEE" />
             </LinearLayout>
-        </LinearLayout>
+        </RelativeLayout>
 
         <!-- TEXTO INFORMATIVO -->
-        <TextView
-            android:id="@+id/tvInfo"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Recuerda mantenerte informado sobre las condiciones de tu zona y tomar precauciones de seguridad."
+            android:background="@drawable/rounded_card_glass"
             android:padding="16dp"
-            android:textSize="14sp"
-            android:textColor="#555555"
-            android:background="@drawable/rounded_card_light"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginBottom="12dp">
 
-        <!-- CATEGORÍAS DE RIESGO -->
-        <GridLayout
-            android:id="@+id/riskCategories"
+            <TextView
+                android:id="@+id/tvInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Recuerda mantenerte informado sobre las condiciones de tu zona y tomar precauciones de seguridad."
+                android:textSize="15sp"
+                android:textColor="#FFFFFF"
+                android:shadowColor="#55000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2" />
+        </RelativeLayout>
+
+        <!-- MAPA -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:alignmentMode="alignMargins"
-            android:columnCount="2"
-            android:gravity="center"
-            android:padding="16dp"
-            android:rowCount="3">
+            android:layout_height="200dp"
+            android:background="@drawable/rounded_card_glass"
+            android:layout_marginBottom="12dp"
+            android:padding="4dp">
 
-            <!-- Ejemplo Riesgo: Inseguridad -->
-            <LinearLayout
-                android:layout_width="170dp"
-                android:layout_height="140dp"
-                android:layout_margin="8dp"
-                android:background="@drawable/card_transport"
-                android:elevation="4dp"
-                android:gravity="center"
-                android:orientation="vertical">
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/miniMapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="false"
+                android:focusable="false" />
 
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_security"
-                    android:tint="#FFFFFF" />
+            <!-- Capa transparente para detectar clics -->
+            <View
+                android:id="@+id/mapOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:clickable="true" />
+        </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Inseguridad"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="170dp"
-                android:layout_height="140dp"
-                android:layout_margin="8dp"
-                android:background="@drawable/card_transport"
-                android:elevation="4dp"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_security"
-                    android:tint="#FFFFFF" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="Seguridad"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </GridLayout>
-
-        <!-- BOTÓN MAPA -->
-        <Button
-            android:id="@+id/btnOpenMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OPEN MAP"
-            android:backgroundTint="#0000FF"
-            android:textColor="#FFFFFF"
-            android:layout_gravity="center"
-            android:layout_marginTop="16dp"
-            android:paddingHorizontal="32dp"
-            android:paddingVertical="12dp"
-            android:background="@drawable/rounded_button"/>
 
         <!-- ÚLTIMAS ALERTAS -->
         <TextView
@@ -189,32 +151,40 @@
             android:text="Últimas Alertas"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="#000000"
-            android:layout_marginTop="24dp"
-            android:layout_marginStart="16dp"/>
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="start" />
 
+        <!-- CAMBIADO: Ahora es un LinearLayout directo -->
         <LinearLayout
             android:id="@+id/layoutAlertas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:background="@drawable/rounded_card_glass"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="⚠️ Asalto reportado cerca de FCFM"
-                android:background="@drawable/rounded_card_light"
+                android:background="@android:color/transparent"
                 android:padding="12dp"
-                android:layout_marginTop="8dp"/>
+                android:textColor="#FFFFFF"
+                android:textSize="15sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="🌊 Encharcamiento en Av. San Claudio"
-                android:background="@drawable/rounded_card_light"
+                android:background="@android:color/transparent"
                 android:padding="12dp"
-                android:layout_marginTop="8dp"/>
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp"
+                android:textSize="15sp" />
         </LinearLayout>
+
     </LinearLayout>
 </ScrollView>

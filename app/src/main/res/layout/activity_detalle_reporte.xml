@@ -8,90 +8,102 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Botón regresar -->
-        <ImageView
-            android:id="@+id/ivBack"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_back_white"
-            android:contentDescription="Regresar"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="16dp"
-            android:alpha="0.9"
-            android:translationZ="6dp"/>
-
-        <!-- Tarjeta principal del reporte -->
         <LinearLayout
-            android:id="@+id/cardReporte"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_below="@id/ivBack"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/glass_card"
-            android:padding="24dp"
-            android:elevation="10dp"
-            android:gravity="center_horizontal"
-            android:animateLayoutChanges="true">
+            android:gravity="center_horizontal">
 
-            <!-- Nombre -->
-            <TextView
-                android:id="@+id/tvNombre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Nombre: Usuario"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="#E5FFF4"
-                android:shadowColor="#1FFF9E"
-                android:shadowDx="0"
-                android:shadowDy="0"
-                android:shadowRadius="8"
-                android:layout_marginBottom="14dp"
-                android:gravity="center"/>
+            <!-- Botón regresar -->
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:src="@drawable/ic_back_white"
+                android:contentDescription="Regresar"
+                android:layout_gravity="start"
+                android:layout_marginTop="8dp"
+                android:alpha="0.9"
+                android:translationZ="6dp" />
 
-            <!-- Fecha y hora -->
-            <TextView
-                android:id="@+id/tvFechaHora"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Fecha/Hora: 01/01/2025 12:00"
-                android:textColor="#B0BEC5"
-                android:layout_marginBottom="12dp"
-                android:gravity="center"/>
+            <!-- Imagen principal del reporte -->
+            <ImageView
+                android:id="@+id/imgReporte"
+                android:layout_width="300dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:contentDescription="Imagen del reporte"
+                android:background="@drawable/image_frame_bg"
+                android:elevation="8dp" />
 
-            <!-- Dirección -->
-            <TextView
-                android:id="@+id/tvDireccion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Dirección: Calle Ejemplo 123"
-                android:textColor="#B0BEC5"
-                android:layout_marginBottom="12dp"
-                android:gravity="center"/>
-
-            <!-- Riesgo -->
-            <TextView
-                android:id="@+id/tvRiesgo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tipo de riesgo: Medio"
-                android:textColor="#B0BEC5"
-                android:layout_marginBottom="12dp"
-                android:gravity="center"/>
-
-            <!-- Descripción -->
-            <TextView
-                android:id="@+id/tvDescripcion"
+            <!-- Tarjeta con información del reporte -->
+            <LinearLayout
+                android:id="@+id/cardReporte"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Descripción del reporte. Aquí se puede poner todo el detalle que necesites. Se mostrará como un párrafo centrado con buena legibilidad."
-                android:textColor="#DDDDDD"
-                android:textSize="16sp"
-                android:lineSpacingExtra="4dp"
-                android:gravity="center"
-                android:paddingTop="8dp"/>
-        </LinearLayout>
+                android:orientation="vertical"
+                android:background="@drawable/glass_card"
+                android:padding="24dp"
+                android:elevation="10dp"
+                android:gravity="center_horizontal"
+                android:animateLayoutChanges="true">
 
+                <TextView
+                    android:id="@+id/tvNombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre: Usuario"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#E5FFF4"
+                    android:shadowColor="#1FFF9E"
+                    android:shadowDx="0"
+                    android:shadowDy="0"
+                    android:shadowRadius="8"
+                    android:layout_marginBottom="14dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/tvFechaHora"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fecha/Hora: 01/01/2025 12:00"
+                    android:textColor="#B0BEC5"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/tvDireccion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Dirección: Calle Ejemplo 123"
+                    android:textColor="#B0BEC5"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/tvRiesgo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tipo de riesgo: Medio"
+                    android:textColor="#B0BEC5"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center" />
+
+                <TextView
+                    android:id="@+id/tvDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Descripción del reporte. Aquí se puede poner todo el detalle que necesites."
+                    android:textColor="#DDDDDD"
+                    android:textSize="16sp"
+                    android:lineSpacingExtra="4dp"
+                    android:gravity="center"
+                    android:paddingTop="8dp" />
+            </LinearLayout>
+        </LinearLayout>
     </RelativeLayout>
 </ScrollView>

@@ -19,7 +19,7 @@ class DatabaseHelper(context: Context) :
 
     companion object {
         private const val DATABASE_NAME = "reportes.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
 
         // Tabla reportes
         private const val TABLE_REPORTES = "reportes"
@@ -30,6 +30,8 @@ class DatabaseHelper(context: Context) :
         private const val COLUMN_DIRECCION = "direccion"
         private const val COLUMN_RIESGO = "riesgo"
         private const val COLUMN_DESCRIPCION = "descripcion"
+        private const val COLUMN_IMAGEN = "foto"
+
 
         // Tabla usuario
         private const val TABLE_USUARIO = "usuario"
@@ -50,7 +52,8 @@ class DatabaseHelper(context: Context) :
                 $COLUMN_HORA TEXT,
                 $COLUMN_DIRECCION TEXT,
                 $COLUMN_RIESGO TEXT,
-                $COLUMN_DESCRIPCION TEXT
+                $COLUMN_DESCRIPCION TEXT,
+                $COLUMN_IMAGEN TEXT
             )
         """.trimIndent()
 
@@ -97,6 +100,7 @@ class DatabaseHelper(context: Context) :
             put(COLUMN_DIRECCION, reporte.direccion)
             put(COLUMN_RIESGO, reporte.riesgo)
             put(COLUMN_DESCRIPCION, reporte.descripcion)
+            put(COLUMN_IMAGEN, reporte.foto)
         }
         return db.insert(TABLE_REPORTES, null, values)
     }
@@ -114,7 +118,8 @@ class DatabaseHelper(context: Context) :
                     hora = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_HORA)),
                     direccion = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DIRECCION)),
                     riesgo = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RIESGO)),
-                    descripcion = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPCION))
+                    descripcion = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPCION)),
+                    foto = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGEN))
                 )
                 reportes.add(reporte)
             } while (cursor.moveToNext())

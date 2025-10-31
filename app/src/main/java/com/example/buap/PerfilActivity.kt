@@ -165,6 +165,7 @@ class PerfilActivity : AppCompatActivity() {
                 intent.putExtra("direccion", reporte.direccion)
                 intent.putExtra("riesgo", reporte.riesgo)
                 intent.putExtra("descripcion", reporte.descripcion)
+                intent.putExtra("imagenPath", reporte.foto)
                 startActivity(intent)
             }
 

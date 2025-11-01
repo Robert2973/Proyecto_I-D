@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- Fondo translúcido -->
-    <solid android:color="#33FFFFFF" /> <!-- 33 = 20% opacidad, puedes ajustar -->
+    <solid android:color="#CCFFFFFF" /> <!-- 33 = 20% opacidad, puedes ajustar -->
 
     <!-- Bordes redondeados -->
     <corners android:radius="12dp" />

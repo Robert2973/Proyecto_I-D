@@ -35,7 +35,6 @@ class ReporteActivity : AppCompatActivity() {
     private lateinit var btnEnviar: Button
     private lateinit var ivBack: ImageView
 
-    // Elementos de tomar foto
     private lateinit var btnTomarFoto: Button
     private lateinit var imgFoto: ImageView
     private lateinit var tvPlaceholder: TextView
@@ -47,10 +46,8 @@ class ReporteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nuevo_reporte)
 
-        // Inicializar base de datos
         dbHelper = DatabaseHelper(this)
 
-        // Referencias
         etNombre = findViewById(R.id.etNombre)
         etFecha = findViewById(R.id.etFecha)
         etHora = findViewById(R.id.etHora)
@@ -60,15 +57,19 @@ class ReporteActivity : AppCompatActivity() {
         btnEnviar = findViewById(R.id.btnEnviar)
         ivBack = findViewById(R.id.imageViewBack)
 
-        // Referencias a tomar foto
         btnTomarFoto = findViewById(R.id.btnTomarFoto)
         imgFoto = findViewById(R.id.imgFoto)
         tvPlaceholder = findViewById(R.id.tvPlaceholder)
 
-        // Botón regresar
+        // ← Aquí recibe la dirección desde MapsActivity
+        val direccionSeleccionada = intent.getStringExtra("direccionSeleccionada")
+        if (!direccionSeleccionada.isNullOrEmpty()) {
+            etDireccion.setText(direccionSeleccionada)
+        }
+
         ivBack.setOnClickListener { finish() }
 
-        // DatePicker para fecha
+        // Fecha
         etFecha.setOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
@@ -83,7 +84,7 @@ class ReporteActivity : AppCompatActivity() {
             datePicker.show()
         }
 
-        // TimePicker para hora
+        // Hora
         etHora.setOnClickListener {
             val calendar = Calendar.getInstance()
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -96,18 +97,15 @@ class ReporteActivity : AppCompatActivity() {
             timePicker.show()
         }
 
-        // Botón tomar foto
         btnTomarFoto.setOnClickListener {
             checkCameraPermissionAndOpen()
         }
 
-        // Botón enviar
         btnEnviar.setOnClickListener {
             enviarReporte()
         }
     }
 
-    // Pedir permiso de cámara
     private fun checkCameraPermissionAndOpen() {
         val permission = Manifest.permission.CAMERA
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -117,7 +115,6 @@ class ReporteActivity : AppCompatActivity() {
         }
     }
 
-    // Abrir Camara
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
@@ -140,7 +137,6 @@ class ReporteActivity : AppCompatActivity() {
         }
     }
 
-    // Crear un archivo temporal para la foto
     @Throws(IOException::class)
     private fun createImageFile(): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
@@ -150,7 +146,6 @@ class ReporteActivity : AppCompatActivity() {
         }
     }
 
-    // Resultado de la camara
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val file = File(currentPhotoPath ?: return@registerForActivityResult)
@@ -160,7 +155,6 @@ class ReporteActivity : AppCompatActivity() {
         }
     }
 
-    // Enviar reporte
     private fun enviarReporte() {
         val nombre = etNombre.text.toString()
         val fecha = etFecha.text.toString()
@@ -169,7 +163,6 @@ class ReporteActivity : AppCompatActivity() {
         val riesgo = etRiesgo.text.toString()
         val descripcion = etDescripcion.text.toString()
         val fotoPath = currentPhotoPath
-
 
         if (nombre.isEmpty() || fecha.isEmpty() || hora.isEmpty() ||
             direccion.isEmpty() || riesgo.isEmpty() || descripcion.isEmpty() || fotoPath.isNullOrEmpty()

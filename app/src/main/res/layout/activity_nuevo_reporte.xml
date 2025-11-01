@@ -15,6 +15,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="70dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/rounded_card_glass"
             android:padding="16dp">
 
@@ -26,14 +27,14 @@
                 android:layout_marginTop="8dp"
                 android:contentDescription="Regresar"
                 android:src="@android:drawable/ic_media_previous"
-                android:tint="#FFFFFF" />
+                android:tint="#000000" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="Nuevo reporte"
-                android:textColor="#FFFFFF"
+                android:textColor="#000000"
                 android:textSize="22sp"
                 android:textStyle="bold" />
         </RelativeLayout>

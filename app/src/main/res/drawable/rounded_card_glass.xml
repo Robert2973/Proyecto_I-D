@@ -2,7 +2,7 @@
     <!-- Capa base translúcida -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#66FFFFFF"/> <!-- Blanco 40% -->
+            <solid android:color="#CCFFFFFF"/> <!-- Blanco 40% -->
             <corners android:radius="20dp"/>
         </shape>
     </item>

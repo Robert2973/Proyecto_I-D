@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="#121212">
+    android:background="@drawable/bg_blur">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@drawable/glass_card"
+                android:background="@drawable/rounded_card_glass"
                 android:padding="24dp"
                 android:elevation="10dp"
                 android:gravity="center_horizontal"
@@ -58,8 +58,8 @@
                     android:text="Nombre: Usuario"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#E5FFF4"
-                    android:shadowColor="#1FFF9E"
+                    android:textColor="#FFFFFF"
+                    android:shadowColor="#000000"
                     android:shadowDx="0"
                     android:shadowDy="0"
                     android:shadowRadius="8"
@@ -71,7 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Fecha/Hora: 01/01/2025 12:00"
-                    android:textColor="#B0BEC5"
+                    android:textColor="#000000"
                     android:layout_marginBottom="12dp"
                     android:gravity="center" />
 
@@ -80,7 +80,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Dirección: Calle Ejemplo 123"
-                    android:textColor="#B0BEC5"
+                    android:textColor="#000000"
                     android:layout_marginBottom="12dp"
                     android:gravity="center" />
 
@@ -89,7 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Tipo de riesgo: Medio"
-                    android:textColor="#B0BEC5"
+                    android:textColor="#000000"
                     android:layout_marginBottom="12dp"
                     android:gravity="center" />
 
@@ -98,7 +98,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Descripción del reporte. Aquí se puede poner todo el detalle que necesites."
-                    android:textColor="#DDDDDD"
+                    android:textColor="#000000"
                     android:textSize="16sp"
                     android:lineSpacingExtra="4dp"
                     android:gravity="center"

@@ -3,9 +3,6 @@ package com.example.buap
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.RenderEffect
-import android.graphics.Shader
-import android.os.Build
 import android.os.Bundle
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,7 +12,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import android.view.View
-
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -45,7 +41,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val tvCity = findViewById<TextView>(R.id.tvCity)
         val tvTemp = findViewById<TextView>(R.id.tvTemp)
         val tvInfo = findViewById<TextView>(R.id.tvInfo)
-        val layoutAlertas = findViewById<LinearLayout>(R.id.layoutAlertas)  // Ahora es un LinearLayout directo
+        val layoutAlertas = findViewById<LinearLayout>(R.id.layoutAlertas)
 
         val userName = intent.getStringExtra("USER_NAME") ?: "Usuario"
         tvSaludo.text = "¡Hola, $userName!"
@@ -57,34 +53,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         tvCity.text = "Puebla"
         tvTemp.text = "25°C • Soleado"
         imgWeather.setImageResource(R.drawable.ic_sun)
-        tvInfo.text = "Recuerda mantenerte informado sobre las condiciones de tu zona y tomar precauciones de seguridad."
-
-        val alertas = listOf(
-            "⚠️ Asalto reportado cerca de FCFM",
-            "🌊 Encharcamiento en Av. San Claudio"
-        )
-        for (alerta in alertas) {
-            val tv = TextView(this)
-            tv.layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            tv.text = alerta
-            tv.textSize = 16f
-            tv.setTextColor(resources.getColor(android.R.color.white))
-            tv.setPadding(20, 20, 20, 20)
-            tv.setBackgroundResource(R.drawable.rounded_card_glass)
-            val params = tv.layoutParams as LinearLayout.LayoutParams
-            params.topMargin = 10
-            tv.layoutParams = params
-            layoutAlertas.addView(tv)
-        }
-
-        mapView.setOnClickListener {
-            val intent = Intent(this, MapsActivity::class.java)
-            startActivity(intent)
-        }
-
+        tvInfo.text =
+            "Recuerda mantenerte informado sobre las condiciones de tu zona y tomar precauciones de seguridad."
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -93,20 +63,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         map.uiSettings.isScrollGesturesEnabled = false
         map.uiSettings.isMapToolbarEnabled = false
 
-        // Asegura que se muestre correctamente dentro del layout
-        mapView.post {
-            mapView.requestLayout()
-        }
+        mapView.post { mapView.requestLayout() }
 
         checkLocationPermissionAndShow()
     }
 
     private fun checkLocationPermissionAndShow() {
         if (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_FINE_LOCATION
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED ||
             ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.ACCESS_COARSE_LOCATION
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             showUserLocation()
@@ -153,8 +122,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         googleMap?.addMarker(MarkerOptions().position(buap).title("BUAP"))
     }
 
-    override fun onResume() { super.onResume(); mapView.onResume() }
-    override fun onPause() { super.onPause(); mapView.onPause() }
-    override fun onDestroy() { super.onDestroy(); mapView.onDestroy() }
-    override fun onLowMemory() { super.onLowMemory(); mapView.onLowMemory() }
+    override fun onResume() {
+        super.onResume(); mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause(); mapView.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy(); mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory(); mapView.onLowMemory()
+    }
 }

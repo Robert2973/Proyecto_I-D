@@ -18,11 +18,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var fusedLocationClient: com.google.android.gms.location.FusedLocationProviderClient
     private var googleMap: GoogleMap? = null
+    private lateinit var dbHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_transport)
 
+        dbHelper = DatabaseHelper(this)
         mapView = findViewById(R.id.miniMapView)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
@@ -43,7 +45,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val tvInfo = findViewById<TextView>(R.id.tvInfo)
         val layoutAlertas = findViewById<LinearLayout>(R.id.layoutAlertas)
 
-        val userName = intent.getStringExtra("USER_NAME") ?: "Usuario"
+        // 3. Obtén el nombre directamente de la base de datos
+        val usuario = dbHelper.getUsuario()
+        val userName = usuario.nombre ?: "Usuario"
+
         tvSaludo.text = "¡Hola, $userName!"
 
         imgPerfil.setOnClickListener {
@@ -124,6 +129,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume(); mapView.onResume()
+        val tvSaludo = findViewById<TextView>(R.id.tvSaludo)
+        val usuario = dbHelper.getUsuario()
+        val userName = usuario.nombre ?: "Usuario"
+        tvSaludo.text = "¡Hola, $userName!"
     }
 
     override fun onPause() {

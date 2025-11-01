@@ -7,5 +7,6 @@ data class Reporte(
     val hora: String,
     val direccion: String,
     val riesgo: String,
-    val descripcion: String
+    val descripcion: String,
+    val foto: String? = null
 )

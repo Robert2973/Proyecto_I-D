@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
                     if (user != null) {
                         Toast.makeText(this@LoginActivity, "Bienvenido $email", Toast.LENGTH_SHORT).show()
                         // Abrir HomeActivity
-                        val intent = Intent(this@LoginActivity, Main::class.java)
+                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)
                         finish() // Cerramos LoginActivity para que no se pueda volver con back
                     } else {

@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.buap">
 
+    <!-- 🌍 Permisos necesarios para ubicación y acceso a red -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +18,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
-        <!-- LoginActivity como launcher -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- 🏠 LoginActivity como launcher -->
         <activity
             android:name=".LoginActivity"
             android:exported="true"
@@ -21,36 +39,46 @@
             </intent-filter>
         </activity>
 
-        <!-- RegisterActivity -->
+        <!-- 🧾 RegisterActivity -->
         <activity
             android:name=".RegisterActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
+        <!-- 🏠 MainActivity -->
         <activity
-            android:name=".Main"
+            android:name=".MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
+        <!-- 🗺️ Maps API Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key"/>
 
+        <!-- 🗺️ MapsActivity -->
         <activity
             android:name=".MapsActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
+        <!-- 📢 ReporteActivity -->
         <activity
             android:name=".ReporteActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
+        <!-- 👤 PerfilActivity -->
         <activity
             android:name=".PerfilActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
+        <!-- 📄 DetalleReporteActivity -->
         <activity
             android:name=".DetalleReporteActivity"
-            android:exported="true"/>
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
     </application>
 

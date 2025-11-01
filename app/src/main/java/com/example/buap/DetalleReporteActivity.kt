@@ -1,5 +1,6 @@
 package com.example.buap
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,6 +12,7 @@ class DetalleReporteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detalle_reporte)
 
+        val imgReporte = findViewById<ImageView>(R.id.imgReporte)
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         val tvNombre = findViewById<TextView>(R.id.tvNombre)
         val tvFechaHora = findViewById<TextView>(R.id.tvFechaHora)
@@ -30,6 +32,8 @@ class DetalleReporteActivity : AppCompatActivity() {
         val direccion = intent.getStringExtra("direccion")
         val riesgo = intent.getStringExtra("riesgo")
         val descripcion = intent.getStringExtra("descripcion")
+        val imagenPath = intent.getStringExtra("imagenPath")
+
 
         // Mostrar datos
         tvNombre.text = "Nombre: $nombre"
@@ -37,5 +41,12 @@ class DetalleReporteActivity : AppCompatActivity() {
         tvDireccion.text = "Dirección: $direccion"
         tvRiesgo.text = "Tipo de riesgo: $riesgo"
         tvDescripcion.text = descripcion
+
+        // Mostrar imagen si existe
+        if (!imagenPath.isNullOrEmpty()) {
+            imgReporte.setImageURI(Uri.parse(imagenPath))
+        } else {
+            imgReporte.setImageResource(R.drawable.ic_back_white)
+        }
     }
 }

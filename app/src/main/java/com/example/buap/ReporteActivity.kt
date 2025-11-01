@@ -1,11 +1,28 @@
 package com.example.buap
 
+import android.Manifest
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ReporteActivity : AppCompatActivity() {
 
@@ -18,16 +35,19 @@ class ReporteActivity : AppCompatActivity() {
     private lateinit var btnEnviar: Button
     private lateinit var ivBack: ImageView
 
+    private lateinit var btnTomarFoto: Button
+    private lateinit var imgFoto: ImageView
+    private lateinit var tvPlaceholder: TextView
+
     private lateinit var dbHelper: DatabaseHelper
+    private var currentPhotoPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_nuevo_reporte) // Tu layout XML
+        setContentView(R.layout.activity_nuevo_reporte)
 
-        // Inicializar base de datos
         dbHelper = DatabaseHelper(this)
 
-        // Referencias a elementos de UI
         etNombre = findViewById(R.id.etNombre)
         etFecha = findViewById(R.id.etFecha)
         etHora = findViewById(R.id.etHora)
@@ -37,14 +57,101 @@ class ReporteActivity : AppCompatActivity() {
         btnEnviar = findViewById(R.id.btnEnviar)
         ivBack = findViewById(R.id.imageViewBack)
 
-        // Botón regresar
-        ivBack.setOnClickListener {
-            finish()
+        btnTomarFoto = findViewById(R.id.btnTomarFoto)
+        imgFoto = findViewById(R.id.imgFoto)
+        tvPlaceholder = findViewById(R.id.tvPlaceholder)
+
+        // ← Aquí recibe la dirección desde MapsActivity
+        val direccionSeleccionada = intent.getStringExtra("direccionSeleccionada")
+        if (!direccionSeleccionada.isNullOrEmpty()) {
+            etDireccion.setText(direccionSeleccionada)
         }
 
-        // Botón enviar
+        ivBack.setOnClickListener { finish() }
+
+        // Fecha
+        etFecha.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val year = calendar.get(Calendar.YEAR)
+            val month = calendar.get(Calendar.MONTH)
+            val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val datePicker = DatePickerDialog(this, { _, y, m, d ->
+                val mes = m + 1
+                etFecha.setText(String.format("%02d/%02d/%04d", d, mes, y))
+            }, year, month, day)
+
+            datePicker.show()
+        }
+
+        // Hora
+        etHora.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            val hour = calendar.get(Calendar.HOUR_OF_DAY)
+            val minute = calendar.get(Calendar.MINUTE)
+
+            val timePicker = TimePickerDialog(this, { _, h, m ->
+                etHora.setText(String.format("%02d:%02d", h, m))
+            }, hour, minute, true)
+
+            timePicker.show()
+        }
+
+        btnTomarFoto.setOnClickListener {
+            checkCameraPermissionAndOpen()
+        }
+
         btnEnviar.setOnClickListener {
             enviarReporte()
+        }
+    }
+
+    private fun checkCameraPermissionAndOpen() {
+        val permission = Manifest.permission.CAMERA
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(permission), 100)
+        } else {
+            openCamera()
+        }
+    }
+
+    private fun openCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if (intent.resolveActivity(packageManager) != null) {
+            val photoFile = try {
+                createImageFile()
+            } catch (ex: IOException) {
+                Toast.makeText(this, "Error al crear el archivo", Toast.LENGTH_SHORT).show()
+                null
+            }
+
+            photoFile?.also {
+                val photoURI: Uri = FileProvider.getUriForFile(
+                    this,
+                    "${packageName}.fileprovider",
+                    it
+                )
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                cameraLauncher.launch(intent)
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File = getExternalFilesDir(null)!!
+        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir).apply {
+            currentPhotoPath = absolutePath
+        }
+    }
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val file = File(currentPhotoPath ?: return@registerForActivityResult)
+            val uri = Uri.fromFile(file)
+            imgFoto.setImageURI(uri)
+            tvPlaceholder.visibility = TextView.GONE
         }
     }
 
@@ -55,9 +162,10 @@ class ReporteActivity : AppCompatActivity() {
         val direccion = etDireccion.text.toString()
         val riesgo = etRiesgo.text.toString()
         val descripcion = etDescripcion.text.toString()
+        val fotoPath = currentPhotoPath
 
         if (nombre.isEmpty() || fecha.isEmpty() || hora.isEmpty() ||
-            direccion.isEmpty() || riesgo.isEmpty() || descripcion.isEmpty()
+            direccion.isEmpty() || riesgo.isEmpty() || descripcion.isEmpty() || fotoPath.isNullOrEmpty()
         ) {
             Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
             return
@@ -69,7 +177,8 @@ class ReporteActivity : AppCompatActivity() {
             hora = hora,
             direccion = direccion,
             riesgo = riesgo,
-            descripcion = descripcion
+            descripcion = descripcion,
+            foto = fotoPath
         )
 
         val id = dbHelper.insertReporte(reporte)
@@ -88,5 +197,8 @@ class ReporteActivity : AppCompatActivity() {
         etDireccion.text.clear()
         etRiesgo.text.clear()
         etDescripcion.text.clear()
+        imgFoto.setImageDrawable(null)
+        tvPlaceholder.visibility = TextView.VISIBLE
+        currentPhotoPath = null
     }
 }

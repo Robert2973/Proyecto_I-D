@@ -150,13 +150,26 @@ class DatabaseHelper(context: Context) :
 
     fun actualizarUsuario(nombre: String, edad: String, direccion: String, telefono: String, imagen: String?) {
         val db = writableDatabase
+
+        // Obtener imagen actual
+        val cursor = db.rawQuery("SELECT $COLUMN_USER_IMAGEN FROM $TABLE_USUARIO LIMIT 1", null)
+        var imagenActual: String? = null
+        if (cursor.moveToFirst()) {
+            imagenActual = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_USER_IMAGEN))
+        }
+        cursor.close()
+
+        val imagenFinal = imagen ?: imagenActual
+
         val cv = ContentValues().apply {
             put(COLUMN_USER_NOMBRE, nombre)
             put(COLUMN_USER_EDAD, edad)
             put(COLUMN_USER_DIRECCION, direccion)
             put(COLUMN_USER_TELEFONO, telefono)
-            if (imagen != null) put(COLUMN_USER_IMAGEN, imagen)
+            put(COLUMN_USER_IMAGEN, imagenFinal)
         }
+
         db.update(TABLE_USUARIO, cv, null, null)
     }
+
 }

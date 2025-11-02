@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import java.io.File
+import java.io.FileOutputStream
 
 class PerfilActivity : AppCompatActivity() {
 
@@ -24,6 +26,7 @@ class PerfilActivity : AppCompatActivity() {
 
     private val PICK_IMAGE = 100
     private var imageUri: Uri? = null
+    private var imagePath: String? = null // ✅ Ruta guardada del archivo interno
     private var editMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,20 +45,28 @@ class PerfilActivity : AppCompatActivity() {
         tvTelefono = findViewById(R.id.tvTelefono)
         btnEditar = findViewById(R.id.btnEditar)
 
-        btnBack.setOnClickListener { finish() }
-
-        imgPerfil.setOnClickListener {
-            // Abrir galería para seleccionar imagen
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(intent, PICK_IMAGE)
+        // 🔹 Regresar a pantalla anterior
+        btnBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
+        // 🔹 Solo permitir cambiar imagen si está activado el modo edición
+        imgPerfil.setOnClickListener {
+            if (editMode) {
+                val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                startActivityForResult(intent, PICK_IMAGE)
+            } else {
+                Toast.makeText(this, "Activa el modo edición para cambiar la imagen", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // 🔹 Botón Editar / Guardar
         btnEditar.setOnClickListener {
             if (!editMode) {
-                // Cambiar a modo edición
                 activarEdicion(true)
             } else {
-                // Guardar cambios
                 guardarCambios()
                 activarEdicion(false)
             }
@@ -90,15 +101,6 @@ class PerfilActivity : AppCompatActivity() {
         parent.addView(et, index)
     }
 
-    private fun convertirEditTextATextView(et: EditText, label: String): TextView {
-        val tv = TextView(this)
-        tv.id = et.id
-        tv.text = "$label: ${et.text}"
-        tv.setTextColor(et.currentTextColor)
-        tv.textSize = et.textSize / resources.displayMetrics.scaledDensity
-        return tv
-    }
-
     private fun guardarCambios() {
         val parent = findViewById<LinearLayout>(R.id.datosUsuario)
         val etNombre = parent.findViewById<EditText>(R.id.tvNombre)
@@ -106,16 +108,16 @@ class PerfilActivity : AppCompatActivity() {
         val etDireccion = parent.findViewById<EditText>(R.id.tvDireccion)
         val etTelefono = parent.findViewById<EditText>(R.id.tvTelefono)
 
-        // Actualizar base de datos
+        // 🔹 Guardar datos incluyendo imagen
         dbHelper.actualizarUsuario(
             etNombre.text.toString(),
             etEdad.text.toString(),
             etDireccion.text.toString(),
             etTelefono.text.toString(),
-            imageUri?.toString()
+            imagePath // ✅ ahora guardamos la ruta absoluta
         )
 
-        // Reconvertir a TextView
+        // 🔹 Reconvertir los campos a TextView
         parent.removeAllViews()
         parent.addView(tvNombre)
         parent.addView(tvEdad)
@@ -128,7 +130,7 @@ class PerfilActivity : AppCompatActivity() {
         tvDireccion.text = "Dirección: ${etDireccion.text}"
         tvTelefono.text = "Tel: ${etTelefono.text}"
 
-        Toast.makeText(this, "Datos guardados", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
     }
 
     private fun cargarDatosUsuario() {
@@ -137,14 +139,28 @@ class PerfilActivity : AppCompatActivity() {
         tvEdad.text = "Edad: ${usuario.edad}"
         tvDireccion.text = "Dirección: ${usuario.direccion}"
         tvTelefono.text = "Tel: ${usuario.telefono}"
-        if (usuario.imagen != null) {
-            imgPerfil.setImageURI(Uri.parse(usuario.imagen))
+
+        if (!usuario.imagen.isNullOrEmpty()) {
+            val archivo = File(usuario.imagen)
+            if (archivo.exists()) {
+                imgPerfil.setImageURI(Uri.fromFile(archivo))
+                imagePath = usuario.imagen // ✅ mantener ruta actual para futuras ediciones
+            }
         }
     }
 
     private fun cargarHistorial() {
         layoutHistorial.removeAllViews()
         val reportes = dbHelper.getAllReportes()
+
+        if (reportes.isEmpty()) {
+            val tvVacio = TextView(this)
+            tvVacio.text = "No hay reportes aún"
+            tvVacio.setPadding(20, 20, 20, 20)
+            layoutHistorial.addView(tvVacio)
+            return
+        }
+
         for (reporte in reportes) {
             val tvReporte = TextView(this)
             tvReporte.text = "${reporte.nombre} - ${reporte.fecha} ${reporte.hora}"
@@ -171,13 +187,6 @@ class PerfilActivity : AppCompatActivity() {
 
             layoutHistorial.addView(tvReporte)
         }
-
-        if (reportes.isEmpty()) {
-            val tvVacio = TextView(this)
-            tvVacio.text = "No hay reportes aún"
-            tvVacio.setPadding(20, 20, 20, 20)
-            layoutHistorial.addView(tvVacio)
-        }
     }
 
     override fun onResume() {
@@ -187,9 +196,36 @@ class PerfilActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
-            imageUri = data.data
-            imgPerfil.setImageURI(imageUri)
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null && editMode) {
+            val uri = data.data ?: return
+            val rutaGuardada = guardarImagenEnInterno(uri)
+
+            if (rutaGuardada != null) {
+                imagePath = rutaGuardada // ✅ guardar la ruta absoluta
+                imageUri = Uri.fromFile(File(rutaGuardada))
+                imgPerfil.setImageURI(imageUri)
+            } else {
+                Toast.makeText(this, "Error al guardar la imagen", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // 🔹 Guarda la imagen seleccionada dentro del almacenamiento interno de la app
+    private fun guardarImagenEnInterno(uri: Uri): String? {
+        return try {
+            val inputStream = contentResolver.openInputStream(uri) ?: return null
+            val nombreArchivo = "perfil_${System.currentTimeMillis()}.jpg"
+            val archivoDestino = File(filesDir, nombreArchivo)
+
+            inputStream.use { input ->
+                FileOutputStream(archivoDestino).use { output ->
+                    input.copyTo(output)
+                }
+            }
+            archivoDestino.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 }

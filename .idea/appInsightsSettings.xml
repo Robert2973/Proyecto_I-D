@@ -9,10 +9,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.example.buap" />
+                  <option name="mobileSdkAppId" value="1:793354471215:android:b0eacdc5fc0fa725b943da" />
+                  <option name="projectId" value="buap-9b5c5" />
+                  <option name="projectNumber" value="793354471215" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

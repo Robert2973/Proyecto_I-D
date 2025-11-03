@@ -4,3 +4,11 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
 }
+
+
+buildscript {
+    dependencies {
+        // Plugin de Google Services (necesario para Firebase)
+        classpath("com.google.gms:google-services:4.4.2")
+    }
+}

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     kotlin("kapt")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -61,18 +62,16 @@ dependencies {
     implementation("com.airbnb.android:lottie:6.1.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.10")
     implementation("de.hdodenhof:circleimageview:3.1.0")
-
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-
     implementation("androidx.appcompat:appcompat:1.7.0")
-
     implementation("com.google.android.gms:play-services-maps:18.1.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
-
     implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
     implementation("com.google.android.material:material:1.6.1")
-
+    implementation("com.google.firebase:firebase-auth:23.0.0")
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation("com.facebook.android:facebook-android-sdk:17.0.2")
 }

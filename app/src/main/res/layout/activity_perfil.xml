@@ -21,6 +21,7 @@
             android:padding="16dp">
 
             <!-- Flecha de regreso -->
+
             <ImageView
                 android:id="@+id/btnBack"
                 android:layout_width="36dp"

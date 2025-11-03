@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">AlertaBUAP</string>
     <string name="google_maps_key">AIzaSyAlIMmJR2YiGD5JgxxJnc4Tvzo0y12Mp-8</string>
+    <string name="default_web_client_id">655030310953-pm59r7mq2afk6gkfacqte46udi6ibcae.apps.googleusercontent.com.apps.googleusercontent.com</string>
 </resources>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "655030310953",
+    "project_id": "alertabuap",
+    "storage_bucket": "alertabuap.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:655030310953:android:5e25237a445247c64e6438",
+        "android_client_info": {
+          "package_name": "com.example.buap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "655030310953-pm59r7mq2afk6gkfacqte46udi6ibcae.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.buap",
+            "certificate_hash": "78f59c9c4b92d74d4cd6847dfe9c39422b4952e0"
+          }
+        },
+        {
+          "client_id": "655030310953-cuta17a6a2cvvghrs3lu160sphgf6gmj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPhorxg1nt-pBxlAzhGprZYGfxXbpw76Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "655030310953-cuta17a6a2cvvghrs3lu160sphgf6gmj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

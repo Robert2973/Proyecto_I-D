@@ -122,12 +122,14 @@
             android:layout_marginBottom="10dp">
 
             <ImageView
+                android:id="@+id/btnGoogleSignIn"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:padding="10dp"
                 android:background="@drawable/icon_glow_circle"
                 android:src="@drawable/ic_google"
                 android:layout_marginEnd="16dp"
+                android:contentDescription="Sign in with Google"
                 android:elevation="6dp"/>
 
             <ImageView

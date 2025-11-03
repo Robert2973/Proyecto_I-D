@@ -60,6 +60,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.airbnb.android:lottie:6.1.0")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.10")
+    implementation("de.hdodenhof:circleimageview:3.1.0")
 
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")

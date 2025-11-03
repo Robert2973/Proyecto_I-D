@@ -40,8 +40,13 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="33dp"
                 android:background="@drawable/circle_bg_shadow"
-                android:padding="10dp"
-                android:src="@drawable/ic_user" />
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true"
+                android:clipToOutline="true"
+                android:outlineProvider="background"
+                android:src="@drawable/ic_user"
+                android:contentDescription="Imagen de perfil" />
+
 
             <!-- Datos usuario dentro de tarjeta cristalina -->
             <LinearLayout

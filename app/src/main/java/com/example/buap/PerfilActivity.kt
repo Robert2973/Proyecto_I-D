@@ -1,6 +1,7 @@
 package com.example.buap
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,6 +10,8 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import java.io.File
 import java.io.FileOutputStream
+import com.google.firebase.auth.FirebaseAuth
+import com.bumptech.glide.Glide
 
 class PerfilActivity : AppCompatActivity() {
 
@@ -74,7 +77,57 @@ class PerfilActivity : AppCompatActivity() {
 
         cargarDatosUsuario()
         cargarHistorial()
+
+        val btnCerrarSesion = findViewById<Button>(R.id.btnCerrarSesion)
+        btnCerrarSesion.setOnClickListener {
+            mostrarDialogoCerrarSesion()
+        }
+
     }
+
+    private fun mostrarDialogoCerrarSesion() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Cerrar sesión")
+        builder.setMessage("¿Estás seguro de que quieres cerrar sesión?")
+
+        builder.setPositiveButton("Sí, salir") { dialog, _ ->
+            // Cerrar sesión de Firebase
+            FirebaseAuth.getInstance().signOut()
+
+            // Cerrar sesión de Google (si es el caso)
+            val googleSignInClient = com.google.android.gms.auth.api.signin.GoogleSignIn.getClient(
+                this,
+                com.google.android.gms.auth.api.signin.GoogleSignInOptions.Builder(
+                    com.google.android.gms.auth.api.signin.GoogleSignInOptions.DEFAULT_SIGN_IN
+                ).build()
+            )
+            googleSignInClient.signOut()
+
+            // 🔹 Eliminar los datos del usuario local
+            val dbHelper = DatabaseHelper(this)
+            dbHelper.limpiarUsuario()
+
+            // 🔹 Redirigir al login y limpiar el back stack
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+
+        builder.setNegativeButton("Cancelar") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val dialog = builder.create()
+        dialog.show()
+
+        // Personalización opcional de los botones
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            .setTextColor(resources.getColor(android.R.color.holo_red_dark))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            .setTextColor(resources.getColor(android.R.color.darker_gray))
+    }
+
 
     private fun activarEdicion(habilitar: Boolean) {
         editMode = habilitar
@@ -114,7 +167,7 @@ class PerfilActivity : AppCompatActivity() {
             etEdad.text.toString(),
             etDireccion.text.toString(),
             etTelefono.text.toString(),
-            imagePath // ✅ ahora guardamos la ruta absoluta
+            imagePath // ✅ ruta o URL según caso
         )
 
         // 🔹 Reconvertir los campos a TextView
@@ -134,20 +187,50 @@ class PerfilActivity : AppCompatActivity() {
     }
 
     private fun cargarDatosUsuario() {
-        val usuario = dbHelper.getUsuario()
-        tvNombre.text = "Nombre: ${usuario.nombre}"
-        tvEdad.text = "Edad: ${usuario.edad}"
-        tvDireccion.text = "Dirección: ${usuario.direccion}"
-        tvTelefono.text = "Tel: ${usuario.telefono}"
 
-        if (!usuario.imagen.isNullOrEmpty()) {
-            val archivo = File(usuario.imagen)
-            if (archivo.exists()) {
-                imgPerfil.setImageURI(Uri.fromFile(archivo))
-                imagePath = usuario.imagen // ✅ mantener ruta actual para futuras ediciones
+        val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+        val user = auth.currentUser
+
+        if (user != null) {
+            val nombre = user.displayName ?: "Usuario Google"
+            val correo = user.email ?: "Sin correo"
+            val foto = user.photoUrl?.toString()
+
+            dbHelper.limpiarUsuario()
+
+            dbHelper.registrarUsuarioDesdeGoogle(nombre, correo, foto)
+
+            tvNombre.text = "Nombre: $nombre"
+            tvEdad.text = "Edad: Desconocida"
+            tvDireccion.text = "Correo: $correo"
+            tvTelefono.text = "Tel: No registrado"
+
+            // ✅ Guardar en variable global para cargar en Main luego
+            imagePath = foto
+
+            Glide.with(this)
+                .load(foto)
+                .placeholder(R.drawable.ic_user)
+                .into(imgPerfil)
+
+        } else {
+            // Si no hay sesión de Google, cargar datos locales
+            val usuario = dbHelper.getUsuario()
+            tvNombre.text = "Nombre: ${usuario.nombre}"
+            tvEdad.text = "Edad: ${usuario.edad}"
+            tvDireccion.text = "Dirección: ${usuario.direccion}"
+            tvTelefono.text = "Tel: ${usuario.telefono}"
+
+            if (!usuario.imagen.isNullOrEmpty()) {
+                val archivo = File(usuario.imagen)
+                if (archivo.exists()) {
+                    imgPerfil.setImageURI(Uri.fromFile(archivo))
+                    imagePath = usuario.imagen
+                }
             }
         }
     }
+
 
     private fun cargarHistorial() {
         layoutHistorial.removeAllViews()

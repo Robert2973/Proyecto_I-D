@@ -17,6 +17,7 @@ import org.json.JSONObject
 import java.io.File
 import java.net.URL
 import kotlin.concurrent.thread
+import com.bumptech.glide.Glide
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -46,6 +47,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         dbHelper = DatabaseHelper(this)
+        val usuario = dbHelper.getUsuario()
+        if (usuario == null) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
 
         val mapOverlay = findViewById<View>(R.id.mapOverlay)
         mapOverlay.setOnClickListener {
@@ -60,7 +69,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         tvInfo = findViewById(R.id.tvInfo)
         imgWeather = findViewById(R.id.imgWeather)
 
-        val userName = intent.getStringExtra("USER_NAME") ?: "Usuario"
+        // 3. Obtén el nombre directamente de la base de datos
+
+        val userName = usuario.nombre ?: "Usuario"
+
         tvSaludo.text = "¡Hola, $userName!"
 
         imgPerfil.setOnClickListener {
@@ -74,12 +86,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     // ================== IMAGEN PERFIL ==================
     private fun cargarImagenPerfil() {
         val usuario = dbHelper.getUsuario()
+
         if (!usuario.imagen.isNullOrEmpty()) {
-            val archivo = File(usuario.imagen)
-            if (archivo.exists()) {
-                imgPerfil.setImageURI(Uri.fromFile(archivo))
+            val imagen = usuario.imagen!!
+
+            if (imagen.startsWith("http")) {
+                // Si la imagen viene de Google (URL)
+                Glide.with(this)
+                    .load(imagen)
+                    .circleCrop()
+                    .placeholder(R.drawable.circle_bg_shadow)
+                    .into(imgPerfil)
             } else {
-                imgPerfil.setImageResource(R.drawable.circle_bg_shadow)
+                // Si es una imagen local del dispositivo
+                val archivo = File(imagen)
+                if (archivo.exists()) {
+                    imgPerfil.setImageURI(Uri.fromFile(archivo))
+                } else {
+                    imgPerfil.setImageResource(R.drawable.circle_bg_shadow)
+                }
             }
         } else {
             imgPerfil.setImageResource(R.drawable.circle_bg_shadow)

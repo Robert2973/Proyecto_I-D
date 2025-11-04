@@ -20,8 +20,6 @@
             android:elevation="8dp"
             android:padding="16dp">
 
-            <!-- Flecha de regreso -->
-
             <ImageView
                 android:id="@+id/btnBack"
                 android:layout_width="36dp"
@@ -33,7 +31,6 @@
                 android:src="@drawable/ic_back_white"
                 android:textColor="#000000" />
 
-            <!-- Imagen perfil circular con sombra -->
             <ImageView
                 android:id="@+id/imgPerfil"
                 android:layout_width="85dp"
@@ -48,8 +45,6 @@
                 android:src="@drawable/ic_user"
                 android:contentDescription="Imagen de perfil" />
 
-
-            <!-- Datos usuario dentro de tarjeta cristalina -->
             <LinearLayout
                 android:id="@+id/datosUsuario"
                 android:layout_width="match_parent"
@@ -95,7 +90,6 @@
                     android:textColor="#070707"
                     android:textSize="16sp" />
 
-                <!-- Botón editar -->
                 <Button
                     android:id="@+id/btnEditar"
                     android:layout_width="match_parent"
@@ -105,7 +99,6 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <!-- Historial -->
         <TextView
             android:id="@+id/tvHistorial"
             android:layout_width="wrap_content"
@@ -118,7 +111,6 @@
             android:layout_marginTop="16dp"
             android:layout_centerHorizontal="true" />
 
-        <!-- Lista Historial con tarjetas cristalinas -->
         <LinearLayout
             android:id="@+id/layoutHistorial"
             android:layout_width="match_parent"
@@ -127,7 +119,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Ejemplo de tarjeta de reporte -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -159,14 +150,18 @@
                 android:elevation="4dp" />
         </LinearLayout>
 
-        <!-- Botones sociales -->
-        <LinearLayout
-            android:id="@+id/socialButtons"
+        <!-- Botón cerrar sesión fijo al final -->
+        <Button
+            android:id="@+id/btnCerrarSesion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Cerrar sesión"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:backgroundTint="#E53935"
             android:layout_below="@id/layoutHistorial"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:padding="16dp" />
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp" />
     </RelativeLayout>
+
 </ScrollView>

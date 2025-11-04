@@ -171,5 +171,40 @@ class DatabaseHelper(context: Context) :
 
         db.update(TABLE_USUARIO, cv, null, null)
     }
+    fun limpiarUsuario() {
+        val db = writableDatabase
+        db.delete("usuario", null, null)
+    }
+
+    fun eliminarUsuario() {
+        val db = writableDatabase
+        db.delete("usuario", null, null)
+        db.close()
+    }
+
+    fun registrarUsuarioDesdeGoogle(nombre: String, correo: String, imagen: String?) {
+        val db = writableDatabase
+
+        // Si ya existe un usuario, se actualiza
+        val cursor = db.rawQuery("SELECT COUNT(*) FROM usuario", null)
+        cursor.moveToFirst()
+        val existe = cursor.getInt(0) > 0
+        cursor.close()
+
+        val cv = ContentValues().apply {
+            put("nombre", nombre)
+            put("edad", "Desconocida")
+            put("direccion", correo)
+            put("telefono", "No registrado")
+            put("imagen", imagen ?: "")
+        }
+
+        if (existe) {
+            db.update("usuario", cv, null, null)
+        } else {
+            db.insert("usuario", null, cv)
+        }
+    }
+
 
 }

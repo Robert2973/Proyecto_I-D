@@ -5,19 +5,22 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.bumptech.glide.Glide
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
-import android.view.View
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import org.json.JSONObject
 import java.io.File
 import java.net.URL
 import kotlin.concurrent.thread
-import com.bumptech.glide.Glide
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -27,34 +30,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var imgPerfil: ImageView
     private lateinit var tvSaludo: TextView
-    private lateinit var dbHelper: DatabaseHelper
-
     private lateinit var tvCity: TextView
     private lateinit var tvTemp: TextView
     private lateinit var tvInfo: TextView
     private lateinit var imgWeather: ImageView
 
-    // 🔹 Coloca aquí tu API Key de OpenWeatherMap
     private val apiKey = "9fa57d7468d439f8a44db7dd62759201"
+
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_transport)
 
+        // Mapas y ubicación
         mapView = findViewById(R.id.miniMapView)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-
-        dbHelper = DatabaseHelper(this)
-        val usuario = dbHelper.getUsuario()
-        if (usuario == null) {
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-            return
-        }
 
         val mapOverlay = findViewById<View>(R.id.mapOverlay)
         mapOverlay.setOnClickListener {
@@ -69,46 +63,57 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         tvInfo = findViewById(R.id.tvInfo)
         imgWeather = findViewById(R.id.imgWeather)
 
-        // 3. Obtén el nombre directamente de la base de datos
-
-        val userName = usuario.nombre ?: "Usuario"
-
-        tvSaludo.text = "¡Hola, $userName!"
+        // 🔹 Cargar datos del usuario desde Firestore
+        cargarDatosUsuario()
 
         imgPerfil.setOnClickListener {
             startActivity(Intent(this, PerfilActivity::class.java))
         }
 
-        cargarImagenPerfil()
-        obtenerClimaActual("Puebla") // Valor inicial
+        obtenerClimaActual("Puebla")
     }
 
-    // ================== IMAGEN PERFIL ==================
-    private fun cargarImagenPerfil() {
-        val usuario = dbHelper.getUsuario()
+    // ================== CARGAR DATOS USUARIO FIRESTORE ==================
+    private fun cargarDatosUsuario() {
+        val user = auth.currentUser
 
-        if (!usuario.imagen.isNullOrEmpty()) {
-            val imagen = usuario.imagen!!
+        if (user == null) {
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
 
-            if (imagen.startsWith("http")) {
-                // Si la imagen viene de Google (URL)
-                Glide.with(this)
-                    .load(imagen)
-                    .circleCrop()
-                    .placeholder(R.drawable.circle_bg_shadow)
-                    .into(imgPerfil)
-            } else {
-                // Si es una imagen local del dispositivo
-                val archivo = File(imagen)
-                if (archivo.exists()) {
-                    imgPerfil.setImageURI(Uri.fromFile(archivo))
+        val uid = user.uid
+
+        db.collection("usuarios").document(uid).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val nombre = document.getString("nombre") ?: user.displayName ?: "Usuario"
+                    val fotoPerfil = document.getString("fotoPerfil") ?: user.photoUrl?.toString() ?: ""
+                    tvSaludo.text = "¡Hola, $nombre!"
+
+                    if (fotoPerfil.isNotEmpty()) {
+                        Glide.with(this)
+                            .load(fotoPerfil)
+                            .circleCrop()
+                            .placeholder(R.drawable.circle_bg_shadow)
+                            .into(imgPerfil)
+                    } else {
+                        imgPerfil.setImageResource(R.drawable.circle_bg_shadow)
+                    }
+
                 } else {
+                    // Si no hay documento (caso nuevo usuario)
+                    tvSaludo.text = "¡Hola!"
                     imgPerfil.setImageResource(R.drawable.circle_bg_shadow)
                 }
             }
-        } else {
-            imgPerfil.setImageResource(R.drawable.circle_bg_shadow)
-        }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error al obtener usuario: ", e)
+                Toast.makeText(this, "Error al cargar usuario", Toast.LENGTH_SHORT).show()
+            }
     }
 
     // ================== CLIMA EN TIEMPO REAL ==================
@@ -161,16 +166,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
     // ================== MAPA ==================
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
         map.uiSettings.isZoomControlsEnabled = false
         map.uiSettings.isScrollGesturesEnabled = false
         map.uiSettings.isMapToolbarEnabled = false
-
         mapView.post { mapView.requestLayout() }
-
         checkLocationPermissionAndShow()
     }
 
@@ -214,12 +216,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 15f))
                     googleMap?.addMarker(MarkerOptions().position(myLatLng).title("Tu ubicación"))
 
-                    // ✅ Obtener ciudad automáticamente
                     val geocoder = android.location.Geocoder(this)
                     val direcciones = geocoder.getFromLocation(location.latitude, location.longitude, 1)
                     val ciudad = direcciones?.firstOrNull()?.locality ?: "Ubicación desconocida"
 
-                    // ✅ Mostrar clima según coordenadas
                     obtenerClimaActual(ciudad = ciudad, lat = location.latitude, lon = location.longitude)
                 } else {
                     showDefaultLocation()
@@ -229,7 +229,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             showDefaultLocation()
         }
     }
-
 
     private fun showDefaultLocation() {
         val buap = LatLng(19.0139, -98.2435)
@@ -241,7 +240,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         mapView.onResume()
-        cargarImagenPerfil()
+        cargarDatosUsuario() // 🔹 Actualiza la información si se cambió en el perfil
     }
 
     override fun onPause() {

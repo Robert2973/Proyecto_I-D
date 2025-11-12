@@ -50,28 +50,71 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create your Account"
+            android:text="Crea tu cuenta"
             android:textSize="15sp"
             android:textColor="#B0BEC5"
             android:layout_marginBottom="24dp"
             android:letterSpacing="0.03"
             android:alpha="0.85"/>
 
+        <!-- Nombre -->
+        <EditText
+            android:id="@+id/etNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nombre completo"
+            android:inputType="textPersonName"
+            android:background="@drawable/glass_input"
+            android:padding="18dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#A9B4BC"
+            android:layout_marginBottom="10dp"
+            android:elevation="8dp"
+            android:alpha="0.95"/>
+
+        <!-- Edad -->
+        <EditText
+            android:id="@+id/etEdad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Edad"
+            android:inputType="number"
+            android:background="@drawable/glass_input"
+            android:padding="18dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#A9B4BC"
+            android:layout_marginBottom="10dp"
+            android:elevation="8dp"
+            android:alpha="0.95"/>
+
+        <!-- Teléfono -->
+        <EditText
+            android:id="@+id/etTelefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Teléfono"
+            android:inputType="phone"
+            android:background="@drawable/glass_input"
+            android:padding="18dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#A9B4BC"
+            android:layout_marginBottom="10dp"
+            android:elevation="8dp"
+            android:alpha="0.95"/>
+
         <!-- Email -->
         <EditText
             android:id="@+id/etEmailRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
+            android:hint="Correo electrónico"
             android:inputType="textEmailAddress"
             android:background="@drawable/glass_input"
             android:padding="18dp"
             android:textColor="#FFFFFF"
             android:textColorHint="#A9B4BC"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="10dp"
             android:elevation="8dp"
-            android:drawablePadding="10dp"
             android:alpha="0.95"/>
 
         <!-- Password -->
@@ -79,15 +122,14 @@
             android:id="@+id/etPasswordRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="Contraseña"
             android:inputType="textPassword"
             android:background="@drawable/glass_input"
             android:padding="18dp"
             android:textColor="#FFFFFF"
             android:textColorHint="#A9B4BC"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:elevation="8dp"
-            android:drawablePadding="10dp"
             android:alpha="0.95"/>
 
         <!-- Confirm Password -->
@@ -95,15 +137,14 @@
             android:id="@+id/etConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Confirm Password"
+            android:hint="Confirmar contraseña"
             android:inputType="textPassword"
             android:background="@drawable/glass_input"
             android:padding="18dp"
             android:textColor="#FFFFFF"
             android:textColorHint="#A9B4BC"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
             android:elevation="8dp"
-            android:drawablePadding="10dp"
             android:alpha="0.95"/>
 
         <!-- Botón Sign Up -->
@@ -111,12 +152,12 @@
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
+            android:text="Registrar cuenta"
             android:textColor="#FFFFFF"
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginTop="30dp"
-            android:layout_marginBottom="70dp"
+            android:layout_marginBottom="40dp"
             android:background="@drawable/animated_button"
             android:elevation="12dp"
             android:letterSpacing="0.07"
@@ -126,10 +167,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Or sign in with"
+            android:text="O regístrate con"
             android:textColor="#8FA4B2"
             android:textSize="14sp"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:layout_marginBottom="14dp"
             android:letterSpacing="0.03"/>
 
@@ -142,7 +183,9 @@
             android:layout_marginTop="6dp"
             android:layout_marginBottom="20dp">
 
+            <!-- Google -->
             <ImageView
+                android:id="@+id/btnGoogleSignIn"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:padding="10dp"
@@ -151,7 +194,9 @@
                 android:layout_marginEnd="16dp"
                 android:elevation="6dp"/>
 
+            <!-- Facebook -->
             <ImageView
+                android:id="@+id/btnFacebookSignIn"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:padding="10dp"
@@ -160,13 +205,15 @@
                 android:layout_marginEnd="16dp"
                 android:elevation="6dp"/>
 
+            <!-- Microsoft
             <ImageView
+                android:id="@+id/btnMicrosoftSignIn"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:padding="10dp"
                 android:background="@drawable/icon_glow_circle"
-                android:src="@drawable/ic_x"
-                android:elevation="6dp"/>
+                android:src="@drawable/ic_microsoft"
+                android:elevation="6dp"/> -->
         </LinearLayout>
 
     </LinearLayout>

@@ -12,6 +12,8 @@ import java.io.File
 import java.io.FileOutputStream
 import com.google.firebase.auth.FirebaseAuth
 import com.bumptech.glide.Glide
+import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
 
 class PerfilActivity : AppCompatActivity() {
 
@@ -26,6 +28,8 @@ class PerfilActivity : AppCompatActivity() {
     private lateinit var tvDireccion: TextView
     private lateinit var tvTelefono: TextView
     private lateinit var btnEditar: Button
+    private lateinit var db: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     private val PICK_IMAGE = 100
     private var imageUri: Uri? = null
@@ -37,6 +41,8 @@ class PerfilActivity : AppCompatActivity() {
         setContentView(R.layout.activity_perfil)
 
         dbHelper = DatabaseHelper(this)
+        db = FirebaseFirestore.getInstance() // 🚨 Inicializar Firestore
+        auth = FirebaseAuth.getInstance()     // 🚨 Inicializar Auth
 
         btnBack = findViewById(R.id.btnBack)
         imgPerfil = findViewById(R.id.imgPerfil)
@@ -75,7 +81,7 @@ class PerfilActivity : AppCompatActivity() {
             }
         }
 
-        cargarDatosUsuario()
+        cargarDatosUsuario() // 🚨 Llama a la nueva función
         cargarHistorial()
 
         val btnCerrarSesion = findViewById<Button>(R.id.btnCerrarSesion)
@@ -161,74 +167,101 @@ class PerfilActivity : AppCompatActivity() {
         val etDireccion = parent.findViewById<EditText>(R.id.tvDireccion)
         val etTelefono = parent.findViewById<EditText>(R.id.tvTelefono)
 
-        // 🔹 Guardar datos incluyendo imagen
-        dbHelper.actualizarUsuario(
-            etNombre.text.toString(),
-            etEdad.text.toString(),
-            etDireccion.text.toString(),
-            etTelefono.text.toString(),
-            imagePath // ✅ ruta o URL según caso
+        val userId = auth.currentUser?.uid ?: return
+
+        val newData = hashMapOf(
+            "nombre" to etNombre.text.toString(),
+            "edad" to etEdad.text.toString(),
+            "direccion" to etDireccion.text.toString(), // Asumiendo que ahora guardas "dirección"
+            "telefono" to etTelefono.text.toString(),
+            "fotoPerfil" to imagePath // Guarda la ruta local o URL
         )
 
-        // 🔹 Reconvertir los campos a TextView
-        parent.removeAllViews()
-        parent.addView(tvNombre)
-        parent.addView(tvEdad)
-        parent.addView(tvDireccion)
-        parent.addView(tvTelefono)
-        parent.addView(btnEditar)
+        db.collection("usuarios").document(userId).update(newData as Map<String, Any>)
+            .addOnSuccessListener {
+                // Actualizar la UI inmediatamente después de una subida exitosa
+                tvNombre.text = "Nombre: ${etNombre.text}"
+                tvEdad.text = "Edad: ${etEdad.text}"
+                tvDireccion.text = "Correo/Dir: ${etDireccion.text}"
+                tvTelefono.text = "Tel: ${etTelefono.text}"
 
-        tvNombre.text = "Nombre: ${etNombre.text}"
-        tvEdad.text = "Edad: ${etEdad.text}"
-        tvDireccion.text = "Dirección: ${etDireccion.text}"
-        tvTelefono.text = "Tel: ${etTelefono.text}"
+                // 🔹 Reconvertir los campos a TextView (Lógica de tu UI)
+                parent.removeAllViews()
+                parent.addView(tvNombre)
+                parent.addView(tvEdad)
+                parent.addView(tvDireccion)
+                parent.addView(tvTelefono)
+                parent.addView(btnEditar)
 
-        Toast.makeText(this, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Datos guardados y actualizados en Firestore", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error al guardar en Firestore: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("PerfilActivity", "Error updating document", e)
+            }
     }
 
     private fun cargarDatosUsuario() {
-
-        val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
         val user = auth.currentUser
 
-        if (user != null) {
-            val nombre = user.displayName ?: "Usuario Google"
-            val correo = user.email ?: "Sin correo"
-            val foto = user.photoUrl?.toString()
+        if (user == null) {
+            Toast.makeText(this, "No hay sesión activa.", Toast.LENGTH_SHORT).show()
+            // Considera redirigir a Login si el usuario es nulo
+            return
+        }
 
-            dbHelper.limpiarUsuario()
+        val userId = user.uid
+        val defaultPhotoUrl = user.photoUrl?.toString() // Foto por defecto de Google/GitHub/Firebase
 
-            dbHelper.registrarUsuarioDesdeGoogle(nombre, correo, foto)
+        db.collection("usuarios").document(userId).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    // 1. Cargar datos de Firestore (fuente principal de verdad)
+                    val nombre = document.getString("nombre") ?: user.displayName ?: "N/A"
+                    val edad = document.getString("edad") ?: "N/A"
+                    val direccion = document.getString("direccion") ?: user.email ?: "N/A"
+                    val telefono = document.getString("telefono") ?: "N/A"
+                    // Nota: Podrías usar el campo 'email' de Firestore o user.email para mostrar el correo
+                    val userEmail = user.email // Guardar el email del proveedor
 
-            tvNombre.text = "Nombre: $nombre"
-            tvEdad.text = "Edad: Desconocida"
-            tvDireccion.text = "Correo: $correo"
-            tvTelefono.text = "Tel: No registrado"
+                    // 2. Cargar foto de Firestore (si está subida) o usar la URL del proveedor
+                    val fotoPerfilFirestore = document.getString("fotoPerfil")
+                    val fotoURL = if (!fotoPerfilFirestore.isNullOrEmpty()) {
+                        fotoPerfilFirestore
+                    } else {
+                        defaultPhotoUrl
+                    }
 
-            // ✅ Guardar en variable global para cargar en Main luego
-            imagePath = foto
+                    // 3. Actualizar la UI
+                    tvNombre.text = "Nombre: $nombre"
+                    tvEdad.text = "Edad: $edad"
+                    // Usar 'Dirección' para mostrar el correo o la dirección guardada
+                    tvDireccion.text = "Correo/Dir: $direccion"
+                    tvTelefono.text = "Tel: $telefono"
 
-            Glide.with(this)
-                .load(foto)
-                .placeholder(R.drawable.ic_user)
-                .into(imgPerfil)
+                    // 4. Cargar Imagen con Glide
+                    Glide.with(this)
+                        .load(fotoURL)
+                        .placeholder(R.drawable.ic_user)
+                        .error(R.drawable.ic_user) // Mostrar ícono por defecto si falla la carga
+                        .into(imgPerfil)
 
-        } else {
-            // Si no hay sesión de Google, cargar datos locales
-            val usuario = dbHelper.getUsuario()
-            tvNombre.text = "Nombre: ${usuario.nombre}"
-            tvEdad.text = "Edad: ${usuario.edad}"
-            tvDireccion.text = "Dirección: ${usuario.direccion}"
-            tvTelefono.text = "Tel: ${usuario.telefono}"
+                    // 5. Actualizar la ruta local/URL para el modo edición
+                    imagePath = fotoURL
 
-            if (!usuario.imagen.isNullOrEmpty()) {
-                val archivo = File(usuario.imagen)
-                if (archivo.exists()) {
-                    imgPerfil.setImageURI(Uri.fromFile(archivo))
-                    imagePath = usuario.imagen
+                } else {
+                    // Si el documento NO existe, significa que algo falló en LoginActivity.
+                    // Mostramos los datos básicos de Firebase Auth.
+                    Log.w("PerfilActivity", "Documento de Firestore no encontrado. Usando datos de Auth.")
+                    tvNombre.text = "Nombre: ${user.displayName ?: "Usuario Nuevo"}"
+                    tvDireccion.text = "Correo: ${user.email ?: "Sin correo"}"
+                    // ... el resto sigue como N/A o desconocido ...
                 }
             }
-        }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error al cargar datos: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("PerfilActivity", "Error getting document", e)
+            }
     }
 
 
@@ -281,12 +314,19 @@ class PerfilActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK && data != null && editMode) {
             val uri = data.data ?: return
+
+            // 🚨 Guardar imagen localmente y obtener la ruta (si es una nueva imagen)
             val rutaGuardada = guardarImagenEnInterno(uri)
 
             if (rutaGuardada != null) {
-                imagePath = rutaGuardada // ✅ guardar la ruta absoluta
-                imageUri = Uri.fromFile(File(rutaGuardada))
-                imgPerfil.setImageURI(imageUri)
+                // Si la imagen se guardó localmente, esta es la nueva ruta
+                imagePath = rutaGuardada
+                imgPerfil.setImageURI(Uri.fromFile(File(rutaGuardada)))
+
+                // NOTA: Si deseas que esta imagen de perfil local sea permanente y accesible desde
+                // otros dispositivos, DEBERÍAS SUBIRLA A FIREBASE STORAGE aquí.
+                // Por simplicidad, solo la guardamos localmente.
+
             } else {
                 Toast.makeText(this, "Error al guardar la imagen", Toast.LENGTH_SHORT).show()
             }

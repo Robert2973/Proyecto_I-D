@@ -5,24 +5,25 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import com.google.firebase.auth.FirebaseAuth // 🚨 NUEVO: Para obtener el UID
+import com.google.firebase.firestore.FirebaseFirestore // 🚨 NUEVO: Para guardar datos
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.storage.FirebaseStorage // 🚨 NUEVO: Para subir imágenes
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import android.util.Log // Para depuración
+
 
 class ReporteActivity : AppCompatActivity() {
 
@@ -39,14 +40,26 @@ class ReporteActivity : AppCompatActivity() {
     private lateinit var imgFoto: ImageView
     private lateinit var tvPlaceholder: TextView
 
-    private lateinit var dbHelper: DatabaseHelper
+    // 🚨 INSTANCIAS DE FIREBASE
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
+
+    private var photoUri: Uri? = null // Usaremos Uri para subir a Storage
+
     private var currentPhotoPath: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nuevo_reporte)
 
-        dbHelper = DatabaseHelper(this)
+        // 🚨 Inicializar Firebase
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
+
+        // ❌ Eliminamos la inicialización de DatabaseHelper, ya no se usa para guardar reportes
+        // dbHelper = DatabaseHelper(this)
 
         etNombre = findViewById(R.id.etNombre)
         etFecha = findViewById(R.id.etFecha)
@@ -149,45 +162,102 @@ class ReporteActivity : AppCompatActivity() {
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
             val file = File(currentPhotoPath ?: return@registerForActivityResult)
-            val uri = Uri.fromFile(file)
-            imgFoto.setImageURI(uri)
+
+            // 🚨 Guardamos la Uri del archivo local para la subida a Storage
+            photoUri = Uri.fromFile(file)
+
+            imgFoto.setImageURI(photoUri)
             tvPlaceholder.visibility = TextView.GONE
         }
     }
 
     private fun enviarReporte() {
+        val user = auth.currentUser
+        if (user == null) {
+            Toast.makeText(this, "Debe iniciar sesión para enviar un reporte.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val nombre = etNombre.text.toString()
         val fecha = etFecha.text.toString()
         val hora = etHora.text.toString()
         val direccion = etDireccion.text.toString()
         val riesgo = etRiesgo.text.toString()
         val descripcion = etDescripcion.text.toString()
-        val fotoPath = currentPhotoPath
 
+        // Usamos photoUri para chequear la foto, que es la Uri local
         if (nombre.isEmpty() || fecha.isEmpty() || hora.isEmpty() ||
-            direccion.isEmpty() || riesgo.isEmpty() || descripcion.isEmpty() || fotoPath.isNullOrEmpty()
+            direccion.isEmpty() || riesgo.isEmpty() || descripcion.isEmpty() || photoUri == null
         ) {
-            Toast.makeText(this, "Por favor completa todos los campos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Por favor completa todos los campos y toma una foto", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val reporte = Reporte(
-            nombre = nombre,
-            fecha = fecha,
-            hora = hora,
-            direccion = direccion,
-            riesgo = riesgo,
-            descripcion = descripcion,
-            foto = fotoPath
+        // 🚨 Iniciar el proceso de subida y guardado
+        uploadImageAndSaveReport(user.uid, photoUri!!, nombre, fecha, hora, direccion, riesgo, descripcion)
+    }
+
+    private fun uploadImageAndSaveReport(
+        userId: String,
+        imagenUri: Uri,
+        nombre: String,
+        fecha: String,
+        hora: String,
+        direccion: String,
+        riesgo: String,
+        descripcion: String
+    ) {
+        Toast.makeText(this, "Enviando reporte...", Toast.LENGTH_SHORT).show()
+
+        // Referencia de Storage: reportes/UID/timestamp.jpg
+        val imageFileName = "${System.currentTimeMillis()}.jpg"
+        val imageRef = storage.reference.child("reportes/$userId/$imageFileName")
+
+        imageRef.putFile(imagenUri)
+            .addOnSuccessListener {
+                // Obtener la URL pública de la imagen
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    saveReportToFirestore(userId, nombre, fecha, hora, direccion, riesgo, descripcion, uri.toString())
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error al subir la imagen: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("ReporteActivity", "Error al subir imagen", e)
+            }
+    }
+
+    private fun saveReportToFirestore(
+        userId: String,
+        nombre: String,
+        fecha: String,
+        hora: String,
+        direccion: String,
+        riesgo: String,
+        descripcion: String,
+        fotoURL: String?
+    ) {
+        val reporteData = hashMapOf(
+            "userId" to userId, // 🚨 ESTO ASOCIA EL REPORTE AL USUARIO
+            "nombreReporte" to nombre,
+            "fecha" to fecha,
+            "hora" to hora,
+            "direccion" to direccion,
+            "riesgo" to riesgo,
+            "descripcion" to descripcion,
+            "fotoURL" to (fotoURL ?: ""),
+            "timestamp" to FieldValue.serverTimestamp()
         )
 
-        val id = dbHelper.insertReporte(reporte)
-        if (id > 0) {
-            Toast.makeText(this, "Reporte enviado correctamente", Toast.LENGTH_SHORT).show()
-            limpiarCampos()
-        } else {
-            Toast.makeText(this, "Error al enviar reporte", Toast.LENGTH_SHORT).show()
-        }
+        db.collection("reportes").add(reporteData)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Reporte enviado correctamente", Toast.LENGTH_SHORT).show()
+                limpiarCampos()
+                finish() // Cierra la activity después de enviar
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error al guardar el reporte: ${e.message}", Toast.LENGTH_LONG).show()
+                Log.e("ReporteActivity", "Error al guardar en Firestore", e)
+            }
     }
 
     private fun limpiarCampos() {
@@ -200,5 +270,6 @@ class ReporteActivity : AppCompatActivity() {
         imgFoto.setImageDrawable(null)
         tvPlaceholder.visibility = TextView.VISIBLE
         currentPhotoPath = null
+        photoUri = null // Limpiar también la Uri de la foto
     }
 }

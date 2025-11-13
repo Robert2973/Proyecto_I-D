@@ -11,6 +11,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.OAuthProvider // Necesario para GitHub/Microsoft
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
@@ -41,6 +43,8 @@ class LoginActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val tvSignUp = findViewById<TextView>(R.id.tvSignUp)
         val btnGoogleSignIn = findViewById<ImageView>(R.id.btnGoogleSignIn)
+        // ** NUEVO: Referencia para el botón de GitHub **
+        val btnGithubLogin = findViewById<ImageView>(R.id.btnGithubLogin) // Asumiendo que es un ImageView o Button
 
         // --- Login con Email y Contraseña ---
         btnLogin.setOnClickListener {
@@ -71,6 +75,11 @@ class LoginActivity : AppCompatActivity() {
         // --- Login con Google ---
         btnGoogleSignIn.setOnClickListener {
             signInWithGoogle()
+        }
+
+        // ** NUEVO: Login con GitHub **
+        btnGithubLogin.setOnClickListener {
+            signInWithGithub()
         }
 
         // --- Si ya hay sesión iniciada ---
@@ -104,34 +113,76 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // --- Autenticación Firebase con Google ---
+    // ----------------------------------------------------------------------------------
+    // 🚀 FUNCIONES DE AUTENTICACIÓN CON GITHUB (OAuth)
+    // ----------------------------------------------------------------------------------
+
+    private fun signInWithGithub() {
+        // 1. Crear el proveedor para GitHub
+        val provider = OAuthProvider.newBuilder("github.com")
+
+        // 2. Opcional: Solicitar scopes para obtener email y perfil
+        provider.setScopes(listOf("user", "user:email"))
+
+        // 3. Iniciar el flujo de autenticación
+        auth.startActivityForSignInWithProvider(this, provider.build())
+            .addOnSuccessListener { authResult ->
+                // Inicio de sesión exitoso. Se usa la función centralizada de guardado/redirección.
+                Toast.makeText(this, "Inicio de sesión con GitHub exitoso.", Toast.LENGTH_SHORT).show()
+                saveUserAndNavigate(authResult.user)
+            }
+            .addOnFailureListener { e ->
+                // El inicio de sesión falló
+                Log.e("GithubAuth", "Error en GitHub: ${e.message}", e)
+                Toast.makeText(this, "Error al iniciar sesión con GitHub: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+    }
+
+    // ----------------------------------------------------------------------------------
+    // 💾 FUNCIONES DE MANEJO DE USUARIO EN FIRESTORE
+    // ----------------------------------------------------------------------------------
+
+    // Función unificada para guardar los datos del usuario después de la autenticación
+    private fun saveUserAndNavigate(user: FirebaseUser?) {
+        user?.let { firebaseUser ->
+            val userDoc = db.collection("usuarios").document(firebaseUser.uid)
+
+            // Intenta obtener el documento. Si no existe, lo crea.
+            userDoc.get().addOnSuccessListener { document ->
+                if (!document.exists()) {
+                    val newUser = hashMapOf(
+                        // Los datos vienen del proveedor (Google, GitHub, etc.)
+                        "nombre" to (firebaseUser.displayName ?: "N/A"),
+                        "email" to (firebaseUser.email ?: "N/A"),
+                        "fotoPerfil" to (firebaseUser.photoUrl?.toString() ?: ""),
+                        // Campos que Firebase no proporciona directamente y deben rellenarse después
+                        "telefono" to (document.getString("telefono") ?: ""),
+                        "edad" to (document.getString("edad") ?: "")
+                    )
+                    userDoc.set(newUser)
+                        .addOnSuccessListener {
+                            Log.d("Firestore", "Nuevo usuario guardado o actualizado.")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w("Firestore", "Error al guardar usuario: $e")
+                        }
+                }
+
+                // Redirigir siempre después de la autenticación y el chequeo/guardado de datos
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+            }
+        }
+    }
+
+    // --- Autenticación Firebase con Google (Modificada para usar saveUserAndNavigate) ---
     private fun firebaseAuthWithGoogle(idToken: String) {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         auth.signInWithCredential(credential)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    val user = auth.currentUser
-
-                    // Guardar usuario si no existe en Firestore
-                    user?.let {
-                        val userDoc = db.collection("usuarios").document(it.uid)
-                        userDoc.get().addOnSuccessListener { document ->
-                            if (!document.exists()) {
-                                val newUser = hashMapOf(
-                                    "nombre" to (it.displayName ?: ""),
-                                    "email" to (it.email ?: ""),
-                                    "fotoPerfil" to (it.photoUrl?.toString() ?: ""),
-                                    "telefono" to "",
-                                    "edad" to ""
-                                )
-                                userDoc.set(newUser)
-                            }
-                        }
-                    }
-
-                    Toast.makeText(this, "Bienvenido, ${user?.displayName}", Toast.LENGTH_LONG).show()
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
+                    // Llamar a la función unificada para guardar y navegar
+                    saveUserAndNavigate(auth.currentUser)
                 } else {
                     Toast.makeText(this, "Error en autenticación con Firebase.", Toast.LENGTH_SHORT).show()
                 }

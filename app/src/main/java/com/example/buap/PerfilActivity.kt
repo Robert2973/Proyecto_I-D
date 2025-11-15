@@ -82,7 +82,6 @@ class PerfilActivity : AppCompatActivity() {
         }
 
         cargarDatosUsuario() // 🚨 Llama a la nueva función
-        cargarHistorial()
 
         val btnCerrarSesion = findViewById<Button>(R.id.btnCerrarSesion)
         btnCerrarSesion.setOnClickListener {
@@ -266,43 +265,73 @@ class PerfilActivity : AppCompatActivity() {
 
 
     private fun cargarHistorial() {
-        layoutHistorial.removeAllViews()
-        val reportes = dbHelper.getAllReportes()
+        layoutHistorial.removeAllViews() // Limpiamos la vista
 
-        if (reportes.isEmpty()) {
-            val tvVacio = TextView(this)
-            tvVacio.text = "No hay reportes aún"
-            tvVacio.setPadding(20, 20, 20, 20)
-            layoutHistorial.addView(tvVacio)
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            mostrarMensajeHistorial("Error: Usuario no autenticado.")
             return
         }
 
-        for (reporte in reportes) {
-            val tvReporte = TextView(this)
-            tvReporte.text = "${reporte.nombre} - ${reporte.fecha} ${reporte.hora}"
-            tvReporte.setBackgroundResource(R.drawable.rounded_card_light)
-            tvReporte.setPadding(20, 20, 20, 20)
+        db.collection("reportes")
+            .whereEqualTo("userId", userId) // 🚨 FILTRO CLAVE: Solo reportes de este usuario
+            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    mostrarMensajeHistorial("Aún no has enviado ningún reporte.")
+                    return@addOnSuccessListener
+                }
+
+                for (document in result) {
+                    val nombreReporte = document.getString("nombreReporte") ?: "Reporte sin título"
+                    val fecha = document.getString("fecha") ?: "Fecha N/A"
+                    val hora = document.getString("hora") ?: "Hora N/A"
+                    val documentoId = document.id // ID del documento para pasar a detalle
+
+                    // Creamos y agregamos la vista del reporte
+                    crearYAgregarReporteView(nombreReporte, fecha, hora, documentoId)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("PerfilActivity", "Error al cargar historial: ", e)
+                mostrarMensajeHistorial("Error al cargar tu historial de reportes.")
+            }
+    }
+
+    // 🚨 Función auxiliar para crear la vista de cada reporte
+    private fun crearYAgregarReporteView(nombre: String, fecha: String, hora: String, documentoId: String) {
+        val tvReporte = TextView(this).apply {
+            text = "$nombre - $fecha $hora"
+            setBackgroundResource(R.drawable.rounded_card_light)
+            setPadding(20, 20, 20, 20)
+
             val params = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(0, 12, 0, 0)
-            tvReporte.layoutParams = params
-
-            tvReporte.setOnClickListener {
-                val intent = Intent(this, DetalleReporteActivity::class.java)
-                intent.putExtra("nombre", reporte.nombre)
-                intent.putExtra("fecha", reporte.fecha)
-                intent.putExtra("hora", reporte.hora)
-                intent.putExtra("direccion", reporte.direccion)
-                intent.putExtra("riesgo", reporte.riesgo)
-                intent.putExtra("descripcion", reporte.descripcion)
-                intent.putExtra("imagenPath", reporte.foto)
-                startActivity(intent)
+            ).apply {
+                setMargins(0, 12, 0, 0)
             }
+            layoutParams = params
 
-            layoutHistorial.addView(tvReporte)
+            setOnClickListener {
+                // Aquí deberías pasar el ID del documento para cargar los detalles
+                // en DetalleReporteActivity desde Firestore.
+                Toast.makeText(this@PerfilActivity, "Abriendo detalle de: $nombre", Toast.LENGTH_SHORT).show()
+
+                // Si necesitas pasar todos los datos como antes, debes recuperarlos del documento
+                // original o crear una nueva consulta en DetalleReporteActivity.
+            }
         }
+
+        layoutHistorial.addView(tvReporte)
+    }
+
+    private fun mostrarMensajeHistorial(mensaje: String) {
+        val tvVacio = TextView(this)
+        tvVacio.text = mensaje
+        tvVacio.setPadding(20, 20, 20, 20)
+        layoutHistorial.addView(tvVacio)
     }
 
     override fun onResume() {

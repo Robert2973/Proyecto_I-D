@@ -21,6 +21,13 @@ import org.json.JSONObject
 import java.io.File
 import java.net.URL
 import kotlin.concurrent.thread
+import android.util.TypedValue
+import android.app.AlertDialog // 🚨 NUEVO: Para el diálogo
+import android.view.LayoutInflater // 🚨 NUEVO: Para inflar el layout
+import com.bumptech.glide.request.target.Target // Necesario para Glide
+import com.bumptech.glide.request.RequestListener // Necesario para Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -39,6 +46,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
+
+    private lateinit var layoutAlertas: LinearLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,8 +72,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         tvInfo = findViewById(R.id.tvInfo)
         imgWeather = findViewById(R.id.imgWeather)
 
+
+        layoutAlertas = findViewById(R.id.layoutAlertas)
+
         // 🔹 Cargar datos del usuario desde Firestore
         cargarDatosUsuario()
+
+        // 🚨 CARGAR Y MOSTRAR LAS ÚLTIMAS ALERTAS
+        //cargarAlertasRecientes()
 
         imgPerfil.setOnClickListener {
             startActivity(Intent(this, PerfilActivity::class.java))
@@ -114,6 +129,151 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 Log.e("Firestore", "Error al obtener usuario: ", e)
                 Toast.makeText(this, "Error al cargar usuario", Toast.LENGTH_SHORT).show()
             }
+    }
+
+    private fun cargarAlertasRecientes() {
+        layoutAlertas.removeAllViews()
+
+        // Consultar los 5 reportes más recientes
+        db.collection("reportes")
+            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .limit(5)
+            .get()
+            .addOnSuccessListener { result ->
+                if (result.isEmpty) {
+                    mostrarMensajeAlertaVacia("No se han reportado alertas recientes.")
+                    return@addOnSuccessListener
+                }
+
+                for (document in result) {
+                    val nombreReporte = document.getString("nombreReporte") ?: "Alerta Desconocida"
+                    val direccion = document.getString("direccion") ?: "Sin dirección"
+                    val riesgo = document.getString("riesgo") ?: "Bajo"
+
+                    // 🚨 OBTENER LA URL DE LA IMAGEN
+                    val fotoURL = document.getString("fotoURL") ?: "" // Si no hay URL, es una cadena vacía
+
+                    val alertaTexto = "$riesgo: $nombreReporte cerca de $direccion"
+
+                    // 🚨 PASAR LA fotoURL a la función
+                    crearYAgregarAlertaView(alertaTexto, fotoURL)
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firestore", "Error al cargar alertas: ", e)
+                mostrarMensajeAlertaVacia("Error al cargar las alertas.")
+            }
+    }
+
+    private fun mostrarDialogoImagen(imageUrl: String) {
+        if (imageUrl.isEmpty()) {
+            Toast.makeText(this, "No hay imagen asociada a este reporte.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 1. Inflar el layout personalizado
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_image_viewer, null)
+
+        val imgReporte = dialogView.findViewById<ImageView>(R.id.imgReporteViewer)
+        val progressBar = dialogView.findViewById<ProgressBar>(R.id.progressBarViewer)
+
+        // 2. Crear el constructor del diálogo
+        val builder = AlertDialog.Builder(this)
+        builder.setView(dialogView)
+        val dialog = builder.create()
+
+        // 3. Cargar la imagen usando Glide
+        progressBar.visibility = View.VISIBLE // Mostrar progreso antes de la carga
+
+        Glide.with(this)
+            .load(imageUrl)
+            // 🚨 Especifica el tipo <Drawable> directamente para evitar ambigüedad de tipo.
+            .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
+
+                override fun onLoadFailed(
+                    e: com.bumptech.glide.load.engine.GlideException?,
+                    model: Any?,
+                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar.visibility = View.GONE
+                    // Asegúrate de que R.drawable.ic_user exista
+                    imgReporte.setImageResource(R.drawable.ic_user)
+                    Toast.makeText(this@MainActivity, "Error al cargar la imagen.", Toast.LENGTH_SHORT).show()
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: android.graphics.drawable.Drawable,
+                    model: Any,
+                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>,
+                    dataSource: com.bumptech.glide.load.DataSource,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    progressBar.visibility = View.GONE
+                    return false
+                }
+            })
+            .into(imgReporte)
+
+        // 4. Mostrar el diálogo
+        dialog.show()
+    }
+
+    private fun crearYAgregarAlertaView(texto: String, fotoURL: String) {
+        val tvAlerta = TextView(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                // Margen inferior para separar las alertas
+                bottomMargin = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics
+                ).toInt()
+            }
+
+            text = texto
+            setBackgroundResource(R.drawable.rounded_card_glass) // Usa el mismo estilo del XML
+            setTextColor(resources.getColor(R.color.black)) // Asegúrate de que este color esté definido
+            setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
+            setPadding(12.dpToPx(), 12.dpToPx(), 12.dpToPx(), 12.dpToPx()) // Relleno de 12dp
+
+            // Opcional: Si quieres que el usuario pueda ver el detalle del reporte al tocarlo
+            setOnClickListener {
+                if (fotoURL.isNotEmpty()) {
+                    // Si la URL existe, la mostramos.
+                    // Idealmente, esto abriría una nueva Activity o un Dialog.
+                    // Por ahora, usamos un Toast para mostrar la URL como prueba:
+                    mostrarDialogoImagen(fotoURL)
+
+                    // Para ver la imagen, necesitas usar una librería como Glide
+                    // para cargar la URL en un ImageView.
+
+                    // Ejemplo: Abrir una nueva actividad para ver la imagen.
+                    // val intent = Intent(this@MainActivity, ImageDisplayActivity::class.java)
+                    // intent.putExtra("IMAGE_URL", fotoURL)
+                    // startActivity(intent)
+
+                } else {
+                    Toast.makeText(this@MainActivity, "Este reporte no contiene imagen.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        layoutAlertas.addView(tvAlerta)
+    }
+
+    private fun mostrarMensajeAlertaVacia(mensaje: String) {
+        val tvVacio = TextView(this).apply {
+            text = mensaje
+            setTextColor(resources.getColor(R.color.black))
+            setPadding(12.dpToPx(), 12.dpToPx(), 12.dpToPx(), 12.dpToPx())
+            layoutAlertas.addView(this)
+        }
+    }
+
+    // Función de extensión para convertir DP a Px (simplifica la configuración de padding y márgenes)
+    private fun Int.dpToPx(): Int {
+        return (this * resources.displayMetrics.density).toInt()
     }
 
     // ================== CLIMA EN TIEMPO REAL ==================
@@ -241,6 +401,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onResume()
         mapView.onResume()
         cargarDatosUsuario() // 🔹 Actualiza la información si se cambió en el perfil
+        cargarDatosUsuario()
+        cargarAlertasRecientes()
     }
 
     override fun onPause() {

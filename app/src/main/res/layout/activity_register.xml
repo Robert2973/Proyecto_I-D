@@ -180,17 +180,18 @@
             android:layout_marginBottom="20dp">
 
             <!-- Google -->
+
+            <!-- Facebook -->
             <ImageView
                 android:id="@+id/btnGoogleSignIn"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:padding="10dp"
-                android:background="@drawable/icon_glow_circle"
-                android:src="@drawable/google"
                 android:layout_marginEnd="16dp"
-                android:elevation="6dp"/>
+                android:background="@drawable/icon_glow_circle"
+                android:elevation="6dp"
+                android:padding="10dp"
+                android:src="@drawable/logo_google" />
 
-            <!-- Facebook -->
             <ImageView
                 android:id="@+id/btnFacebookSignIn"
                 android:layout_width="52dp"

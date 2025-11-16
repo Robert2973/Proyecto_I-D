@@ -23,6 +23,10 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import android.util.Log // Para depuración
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
+import android.view.View
 
 
 class ReporteActivity : AppCompatActivity() {
@@ -34,6 +38,8 @@ class ReporteActivity : AppCompatActivity() {
     private lateinit var etRiesgo: EditText
     private lateinit var etDescripcion: EditText
     private lateinit var btnEnviar: Button
+    private lateinit var layoutCarga: LinearLayout
+    private lateinit var tvEstadoCarga: TextView
     private lateinit var ivBack: ImageView
 
     private lateinit var btnTomarFoto: Button
@@ -43,7 +49,6 @@ class ReporteActivity : AppCompatActivity() {
     // 🚨 INSTANCIAS DE FIREBASE
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
-    private lateinit var storage: FirebaseStorage
 
     private var photoUri: Uri? = null // Usaremos Uri para subir a Storage
 
@@ -56,7 +61,17 @@ class ReporteActivity : AppCompatActivity() {
         // 🚨 Inicializar Firebase
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
-        storage = FirebaseStorage.getInstance()
+
+        val config: MutableMap<String, String> = HashMap()
+        config["cloud_name"] = "dde3jjlyv"
+        config["api_key"] = "569112689544813" // 🚨 Asegúrate de añadir esta línea
+        config["api_secret"] = "rNaYSg1_J4psDjSqYNjukN2uv6" // 🚨 Y esta línea
+
+        try {
+            MediaManager.init(this, config)
+        } catch (e: Exception) {
+            Log.e("Cloudinary", "Error al inicializar Cloudinary: ${e.message}")
+        }
 
         // ❌ Eliminamos la inicialización de DatabaseHelper, ya no se usa para guardar reportes
         // dbHelper = DatabaseHelper(this)
@@ -114,11 +129,27 @@ class ReporteActivity : AppCompatActivity() {
             checkCameraPermissionAndOpen()
         }
 
+        // 🚨 Obtener referencias a los elementos de carga
+        layoutCarga = findViewById(R.id.layoutCarga)
+        tvEstadoCarga = findViewById(R.id.tvEstadoCarga)
+
         btnEnviar.setOnClickListener {
             enviarReporte()
         }
     }
 
+    private fun mostrarCarga(mostrar: Boolean, mensaje: String? = null) {
+        if (mostrar) {
+            layoutCarga.visibility = View.VISIBLE // ⬅️ Mostrar
+            btnEnviar.isEnabled = false // ⬅️ Desactivar botón
+            if (mensaje != null) {
+                tvEstadoCarga.text = mensaje
+            }
+        } else {
+            layoutCarga.visibility = View.GONE // ⬅️ Ocultar
+            btnEnviar.isEnabled = true // ⬅️ Reactivar botón
+        }
+    }
     private fun checkCameraPermissionAndOpen() {
         val permission = Manifest.permission.CAMERA
         if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -193,6 +224,8 @@ class ReporteActivity : AppCompatActivity() {
             return
         }
 
+        mostrarCarga(true, "Iniciando validación...")
+
         // 🚨 Iniciar el proceso de subida y guardado
         uploadImageAndSaveReport(user.uid, photoUri!!, nombre, fecha, hora, direccion, riesgo, descripcion)
     }
@@ -207,23 +240,45 @@ class ReporteActivity : AppCompatActivity() {
         riesgo: String,
         descripcion: String
     ) {
-        Toast.makeText(this, "Enviando reporte...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Subiendo imagen...", Toast.LENGTH_SHORT).show()
 
-        // Referencia de Storage: reportes/UID/timestamp.jpg
-        val imageFileName = "${System.currentTimeMillis()}.jpg"
-        val imageRef = storage.reference.child("reportes/$userId/$imageFileName")
+        // 🚨 Usar el nombre del preset configurado en la consola
+        val uploadPreset = "android_reports"
 
-        imageRef.putFile(imagenUri)
-            .addOnSuccessListener {
-                // Obtener la URL pública de la imagen
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    saveReportToFirestore(userId, nombre, fecha, hora, direccion, riesgo, descripcion, uri.toString())
+        // Opcionalmente, puedes seguir usando la carpeta del usuario
+        val folderName = "app_reports/$userId"
+
+        MediaManager.get().upload(imagenUri)
+            .option("resource_type", "image")
+            .option("folder", folderName)
+            .unsigned(uploadPreset)
+            .callback(object : UploadCallback {
+                override fun onStart(requestId: String) {
+                    mostrarCarga(true, "Subiendo imagen...")
                 }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Error al subir la imagen: ${e.message}", Toast.LENGTH_LONG).show()
-                Log.e("ReporteActivity", "Error al subir imagen", e)
-            }
+
+                override fun onProgress(requestId: String, bytes: Long, totalBytes: Long) {
+                    val progreso = (bytes.toFloat() / totalBytes.toFloat() * 100).toInt()
+                    mostrarCarga(true, "Subiendo imagen... $progreso%")
+                }
+
+                override fun onSuccess(requestId: String, resultData: Map<*, *>) {
+                    val imageUrl = resultData["secure_url"] as String
+
+                    // 🚨 ACTUALIZAR MENSAJE: antes de guardar en Firestore
+                    mostrarCarga(true, "Imagen subida. Guardando reporte...")
+                    saveReportToFirestore(userId, nombre, fecha, hora, direccion, riesgo, descripcion, imageUrl)
+                }
+
+                override fun onError(requestId: String, error: ErrorInfo) {
+                    // 🚨 OCULTAR CARGA EN CASO DE ERROR
+                    mostrarCarga(false)
+                    Toast.makeText(this@ReporteActivity, "Error al subir imagen: ${error.description}", Toast.LENGTH_LONG).show()
+                    Log.e("Cloudinary", "Upload Error: ${error.description}")
+                }
+
+                override fun onReschedule(requestId: String, error: ErrorInfo) {}
+            }).dispatch()
     }
 
     private fun saveReportToFirestore(
@@ -236,27 +291,35 @@ class ReporteActivity : AppCompatActivity() {
         descripcion: String,
         fotoURL: String?
     ) {
+        // ... (La implementación de esta función se mantiene sin cambios)
         val reporteData = hashMapOf(
-            "userId" to userId, // 🚨 ESTO ASOCIA EL REPORTE AL USUARIO
+            "userId" to userId,
             "nombreReporte" to nombre,
             "fecha" to fecha,
             "hora" to hora,
             "direccion" to direccion,
             "riesgo" to riesgo,
             "descripcion" to descripcion,
-            "fotoURL" to (fotoURL ?: ""),
+            "fotoURL" to (fotoURL ?: ""), // Guarda la URL de Cloudinary
             "timestamp" to FieldValue.serverTimestamp()
         )
 
         db.collection("reportes").add(reporteData)
             .addOnSuccessListener {
+                mostrarCarga(false)
                 Toast.makeText(this, "Reporte enviado correctamente", Toast.LENGTH_SHORT).show()
                 limpiarCampos()
-                finish() // Cierra la activity después de enviar
+
+                // 🚨 NAVEGACIÓN A MAIN ACTIVITY
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+
+                finish()
             }
             .addOnFailureListener { e ->
+                mostrarCarga(false)
                 Toast.makeText(this, "Error al guardar el reporte: ${e.message}", Toast.LENGTH_LONG).show()
-                Log.e("ReporteActivity", "Error al guardar en Firestore", e)
+                // ...
             }
     }
 

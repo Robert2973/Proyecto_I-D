@@ -196,5 +196,32 @@
                 android:background="@drawable/bg_button"
                 android:layout_marginBottom="20dp"/>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/layoutCarga"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="12dp"
+            android:background="@drawable/rounded_card_white"
+            android:elevation="4dp"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/colorPrimary" />
+
+            <TextView
+                android:id="@+id/tvEstadoCarga"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Iniciando envío..."
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

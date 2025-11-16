@@ -2,4 +2,7 @@
     <string name="app_name">AlertaBUAP</string>
     <string name="google_maps_key">AIzaSyAlIMmJR2YiGD5JgxxJnc4Tvzo0y12Mp-8</string>
     <string name="default_web_client_id">655030310953-pm59r7mq2afk6gkfacqte46udi6ibcae.apps.googleusercontent.com.apps.googleusercontent.com</string>
+    <string name="cloudinary_cloud_name">dde3jjlyv</string>
+    <string name="cloudinary_api_key">569112689544813</string>
+    <string name="cloudinary_api_secret">rNaYSg1_J4psDjSqYNjukN2uv6o</string>
 </resources>

@@ -128,7 +128,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@drawable/rounded_card_glass"
+            android:background="@drawable/cuadrado_card_glass"
             android:layout_marginBottom="12dp"
             android:padding="4dp">
 

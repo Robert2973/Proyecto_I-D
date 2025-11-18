@@ -105,7 +105,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Or sign in with"
+            android:text="O inicia sesión con"
             android:textColor="#8FA4B2"
             android:textSize="14sp"
             android:layout_marginTop="28dp"
@@ -157,7 +157,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="26dp"
-            android:text="Don't have an account? Sign up"
+            android:text="¿No tienes una cuenta? Regístrate"
             android:textSize="14sp"
             android:textColor="#E5FFF4"
             android:shadowColor="#1FFF9E"

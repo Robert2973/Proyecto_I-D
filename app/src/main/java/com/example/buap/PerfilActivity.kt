@@ -315,12 +315,16 @@ class PerfilActivity : AppCompatActivity() {
             layoutParams = params
 
             setOnClickListener {
-                // Aquí deberías pasar el ID del documento para cargar los detalles
-                // en DetalleReporteActivity desde Firestore.
-                Toast.makeText(this@PerfilActivity, "Abriendo detalle de: $nombre", Toast.LENGTH_SHORT).show()
+                // 🚨 MODIFICACIÓN CLAVE AQUÍ:
+                val intent = Intent(this@PerfilActivity, DetalleReporteActivity::class.java)
 
-                // Si necesitas pasar todos los datos como antes, debes recuperarlos del documento
-                // original o crear una nueva consulta en DetalleReporteActivity.
+                // Pasamos el ID del documento de Firestore
+                intent.putExtra("reporteId", documentoId)
+
+                // Opcional: También puedes pasar el nombre para un Toast rápido
+                Toast.makeText(this@PerfilActivity, "Cargando reporte: $nombre", Toast.LENGTH_SHORT).show()
+
+                startActivity(intent)
             }
         }
 

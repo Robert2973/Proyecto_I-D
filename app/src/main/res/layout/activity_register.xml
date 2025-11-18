@@ -192,28 +192,19 @@
                 android:background="@drawable/icon_glow_circle"
                 android:src="@drawable/ic_google"
                 android:layout_marginEnd="16dp"
+                android:contentDescription="Sign in with Google"
+                android:clickable="true"
                 android:elevation="6dp"/>
 
-            <!-- Facebook -->
             <ImageView
-                android:id="@+id/btnFacebookSignIn"
+                android:id="@+id/btnGitHubSignIn"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:padding="10dp"
                 android:background="@drawable/icon_glow_circle"
-                android:src="@drawable/ic_facebook"
-                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_x"
+                android:clickable="true"
                 android:elevation="6dp"/>
-
-            <!-- Microsoft
-            <ImageView
-                android:id="@+id/btnMicrosoftSignIn"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
-                android:padding="10dp"
-                android:background="@drawable/icon_glow_circle"
-                android:src="@drawable/ic_microsoft"
-                android:elevation="6dp"/> -->
         </LinearLayout>
 
     </LinearLayout>
